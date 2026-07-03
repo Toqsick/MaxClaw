@@ -1,0 +1,103 @@
+# =============================================================================
+# MaxClaw — config.yaml (Vorlage)
+# Sicherheits-Philosophie: DEFAULT-DENY. Grundsätzlich darf der Agent nichts;
+# nur explizit freigeschaltete Tools/Befehle sind erlaubt.
+# Siehe docs/07-security.md (Block 7) für die Begründung.
+# =============================================================================
+
+# --- Modell-Routing: verschiedene Modelle für verschiedene Aufgaben ----------
+# Prinzip (docs/02): billig für Routine, stark nur wenn Qualität zählt.
+models:
+  # Hauptagent im Alltag — günstig aber gut
+  main:
+    provider: openrouter          # ein Key, viele Modelle
+    model: moonshotai/kimi-k2.5   # günstig-aber-gut
+    monthly_limit_eur: 20         # harte Kostengrenze
+    fallback: openrouter/free     # bei Limit → kostenloses Modell
+
+  # Komplexe Aufgaben / Coding — stark, nur wenn nötig
+  heavy:
+    provider: openrouter
+    model: anthropic/claude-opus-4.6
+
+  # Heartbeat & Routine-Checks — so billig wie möglich (läuft alle 30 min!)
+  heartbeat:
+    provider: openrouter
+    model: google/gemini-flash
+
+  # Subagenten (Recherche) — billig, brauchen keine Power
+  subagent:
+    provider: openrouter
+    model: google/gemini-flash
+
+# --- Berechtigungen: DEFAULT-DENY --------------------------------------------
+permissions:
+  default: deny                   # <-- Kern der Sicherheit
+
+  tools:
+    terminal:
+      enabled: true
+      # nur diese Shell-Befehle sind erlaubt (Allowlist):
+      allow:
+        - "git status"
+        - "git diff*"
+        - "git log*"
+        - "git add*"
+        - "git commit*"
+        - "ls*"
+        - "cat*"
+        - "grep*"
+        - "greybel build*"
+      # explizit verboten (auch wenn oben gematcht):
+      deny:
+        - "rm -rf*"
+        - "git push* main*"       # main-Push nur nach Freigabe
+        - "sudo*"
+        - "curl* | *sh"           # kein blindes Pipe-to-shell
+    file:
+      enabled: true
+      write_paths:                # Schreiben nur in diesen Ordnern
+        - "~/greyhack-tools/"
+        - "~/docs/"
+        - "~/.openclaw/agent/"
+    browser:
+      enabled: false              # aus — Prompt-Injection-Risiko (docs/07)
+    web_search:
+      enabled: true
+
+# --- Bestätigungspflicht (Human-in-the-loop) ---------------------------------
+confirmations:
+  require_before:
+    - send_message                # Nachrichten senden
+    - publish                     # veröffentlichen
+    - delete_outside_workspace    # löschen außerhalb des Arbeitsordners
+    - git_push_main               # push auf main
+
+# --- Secrets: niemals im Klartext hier! --------------------------------------
+# Zugangsdaten über SecretRef (verschlüsselt im out/-Ordner), NICHT hier eintragen.
+# Least Privilege: API-Keys nur mit kleinstmöglicher Berechtigung.
+secrets:
+  backend: secretref
+  path: "~/.openclaw/out/"
+
+# --- Gateway / Netzwerk (siehe docs/08) --------------------------------------
+gateway:
+  bind: "127.0.0.1"               # NUR localhost — nie 0.0.0.0!
+  port: 18789
+  require_token: true             # Gateway-Token Pflicht
+
+# --- Channels (Plugins unter der Haube) --------------------------------------
+channels:
+  telegram:
+    enabled: true
+    # bot_token: über SecretRef, nicht hier
+    home_chat_id: "7222661188"    # Basti
+
+# --- Automatisierung ---------------------------------------------------------
+automation:
+  heartbeat:
+    interval_minutes: 30
+    model: heartbeat              # billiges Modell erzwingen
+  cron:
+    enabled: true
+    # konkrete Jobs: siehe workflows/ + register-workflows.sh

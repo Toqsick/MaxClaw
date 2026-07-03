@@ -1,0 +1,25 @@
+# MaxClaw Workspace — .gitignore
+
+# Secrets NIEMALS committen (docs/07 — SecretRef, Least Privilege)
+out/
+*.key
+*.token
+*.pem
+.env
+.env.*
+secrets.yaml
+
+# Laufzeit-Gedächtnis (persönlich, gehört nicht ins Repo)
+agent/daily/
+agent/MEMORY.local.md
+
+# OS / Editor
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/
