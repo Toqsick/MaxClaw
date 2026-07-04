@@ -1,0 +1,299 @@
+# =============================================================================
+# hardening_audit_maxclaw.yaml
+# =============================================================================
+# Self-Hardening-Config für MaxClaw. Inspiriert von GreyHacks
+# `yuno-tools/hardening_audit.src`, aber adaptiert auf Linux/MaxClaw.
+#
+# GreyHack-Mapping:
+#   PHASE 0  Backup-Admin   →  secrets.backup & emergency_restore
+#   PHASE 1  User-Audit      →  accounts.snapshot + audit_users
+#   PHASE 2  Port-Audit      →  network.open_ports + gateway_bind
+#   PHASE 3  Firewall        →  network.egress + ingress
+#   PHASE 4  Permission-Check → filesystem.permissions + write_paths
+#   PHASE 5  Trace-Monitoring → observability.logs + alerts
+#
+# Jede Phase hat:
+#   - threshold:  ab welchem Wert gilt der Befund?
+#   - severity:   P0 / P1 / P2
+#   - remediation: konkreter Fix-Hinweis (read-only — keine Auto-Apply!)
+# =============================================================================
+
+version: "1.0"
+generated: "2026-07-04"
+applies_to: "MaxClaw v3.x auf Linux/bratan"
+
+# -----------------------------------------------------------------------------
+# PHASE 0 — Backup-Admin (GreyHack: BACKUP_USER "sysadmin")
+# -----------------------------------------------------------------------------
+# GreyHack-Original: legt einen Backup-User mit bekanntem Passwort an, falls
+# man sich selbst aussperrt. Für Linux/MaxClaw: prüfe, dass die
+# Recovery-Pfade intakt sind und das Secret-Ref-Backup existiert.
+phase_0_backup_admin:
+  enabled: true
+  severity_if_missing: P0
+  checks:
+    - id: backup.secretref_exists
+      description: "SecretRef-Backend vorhanden unter ~/.openclaw/out/"
+      command: "test -d $HOME/.openclaw/out"
+      expect: directory_present
+      remediation: "OpenClaw-Workspace initialisieren oder Hermes-Config sichern."
+
+    - id: backup.config_backup_recent
+      description: "Letzte config.yaml-Sicherung < 14 Tage alt"
+      command: "find $HOME/.hermes -name 'config.yaml.bak.*' -mtime -14"
+      expect: at_least_one_match
+      threshold_days: 14
+      remediation: "Vor jeder Config-Änderung Snapshot anlegen."
+
+    - id: backup.git_remote_configured
+      description: "Git-Remote ist gesetzt (Repo nicht nur lokal)"
+      command: "git -C $REPO_DIR remote get-url origin"
+      expect: non_empty
+      remediation: "git remote add origin <url>"
+
+# -----------------------------------------------------------------------------
+# PHASE 1 — User-Audit (GreyHack: listet alle User, warnt vor 'guest')
+# -----------------------------------------------------------------------------
+phase_1_user_audit:
+  enabled: true
+  severity_if_issues: P1
+  checks:
+    - id: user.no_root_sessions_for_agent
+      description: "MaxClaw läuft NICHT als root (uid 0)"
+      command: "[[ $UID -ne 0 ]]"
+      expect: true
+      severity: P0
+      remediation: "MaxClaw als User bratan ausführen, niemals als root."
+
+    - id: user.no_unexpected_uid_in_cron
+      description: "Kein Cron-Job mit uid=0 in der User-Crontab"
+      command: "crontab -l | grep -E '^[^#].*sudo|root'"
+      expect: empty
+      severity: P0
+      remediation: "Cron ausschließlich im User-Crontab, ohne sudo."
+
+    - id: user.bin_ownership
+      description: "~/bin/ gehört bratan:bratan"
+      command: "stat -c '%U:%G' $HOME/bin"
+      expect: "bratan:bratan"
+      severity: P1
+      remediation: "sudo chown -R bratan:bratan ~/bin/"
+
+# -----------------------------------------------------------------------------
+# PHASE 2 — Port-Audit (GreyHack: listet offene Ports)
+# -----------------------------------------------------------------------------
+phase_2_port_audit:
+  enabled: true
+  severity_if_open_to_world: P0
+  checks:
+    - id: port.gateway_loopback_only
+      description: "MaxClaw-Gateway bindet NUR auf 127.0.0.1"
+      command: "ss -ltnp | grep ':18789'"
+      expect_match: "127.0.0.1:18789"
+      expect_no_match: "0.0.0.0:18789"
+      severity: P0
+      remediation: "config.yaml: gateway.bind = '127.0.0.1' (nicht 0.0.0.0!)."
+
+    - id: port.no_unexpected_listeners
+      description: "Keine unerwarteten offenen Ports (Listen auf 0.0.0.0)"
+      command: "ss -ltn | awk '$4 ~ /^0\\.0\\.0\\.0:/'"
+      expect: only_known_services  # sshd(22), gvfsd, snapd — dokumentiert erlauben
+      known_safe:
+        - pattern: "^0\\.0\\.0\\.0:22\\s"      # sshd
+          label: "sshd"
+        - pattern: "^0\\.0\\.0\\.0:445\\s"    # samba (lokal ok)
+          label: "samba"
+      severity: P1
+      remediation: "Jeden unerwarteten Listener in der known_safe-Liste begründen oder schließen."
+
+    - id: port.no_port_18789_exposed
+      description: "Port 18789 (MaxClaw-Gateway) nicht von außen erreichbar"
+      command: "ss -ltn | grep -E ':18789\\s' | grep -v 127.0.0.1"
+      expect: empty
+      severity: P0
+      remediation: "Sofort .openclaw/.hermes stoppen, dann gateway.bind prüfen."
+
+# -----------------------------------------------------------------------------
+# PHASE 3 — Firewall / Egress-Isolation
+# -----------------------------------------------------------------------------
+phase_3_firewall:
+  enabled: true
+  severity_if_violated: P1
+  checks:
+    - id: egress.allowlist_only
+      description: "Ausgehende HTTPS-Verbindungen nur zu Allowlist-Hosts"
+      expected_allowlist:
+        - "openrouter.ai"
+        - "api.telegram.org"
+        - "api.github.com"
+        - "github.com"
+        - "raw.githubusercontent.com"
+      command: "sudo ufw status verbose 2>/dev/null || sudo iptables -L OUTPUT -n"
+      expect: allowlist_violations == 0
+      severity: P1
+      remediation: "ufw-Regeln: ufw allow out to api.telegram.org; ufw deny out to any"
+
+    - id: egress.no_plain_http
+      description: "Keine HTTP-(Port-80-)Outbound-Connections"
+      command: "sudo ufw status | grep -E '^[^#].*80/tcp'"
+      expect: empty
+      severity: P2
+      remediation: "ufw deny out 80/tcp"
+
+    - id: egress.dns_resolution_sane
+      description: "DNS-Resolver funktioniert (DoH-Resolver bevorzugt)"
+      command: "getent hosts api.telegram.org"
+      expect: non_empty
+      severity: P2
+      remediation: "systemd-resolved konfigurieren oder DoH (1.1.1.1, 9.9.9.9) setzen."
+
+# -----------------------------------------------------------------------------
+# PHASE 4 — Permission-Check (GreyHack: prüft /etc/passwd + /home-Perms)
+# -----------------------------------------------------------------------------
+phase_4_permission_check:
+  enabled: true
+  checks:
+    - id: perm.write_paths_declared
+      description: "write_paths in config.yaml deklariert und konsistent mit tatsächlich genutzten Verzeichnissen"
+      config_field: "permissions.file.write_paths"
+      expect:
+        - "~/greyhack-tools/"
+        - "~/docs/"
+        - "~/.openclaw/agent/"
+      severity_if_extra_unjustified: P2
+      remediation: "Ungenutzte Pfade entfernen; genutzte hinzufügen."
+
+    - id: perm.no_world_writable_in_workspace
+      description: "Keine world-writable Dateien in ~/greyhack-tools und ~/.openclaw"
+      command: "find ~/greyhack-tools ~/.openclaw ~/.hermes -type f -perm -o+w 2>/dev/null"
+      expect: empty
+      severity: P0
+      remediation: "chmod o-w <file> — oder Audit-Trail in Telegram."
+
+    - id: perm.no_world_readable_secrets
+      description: "SecretRef-Verzeichnis ist 0700 (nur Eigentümer)"
+      command: "stat -c '%a %U' $HOME/.openclaw/out 2>/dev/null"
+      expect: "700 bratan"
+      severity: P0
+      remediation: "chmod 700 ~/.openclaw/out; Schlüssel neu erzeugen falls schon geleakt."
+
+    - id: perm.ssh_dir_700
+      description: "~/.ssh ist 700 (falls vorhanden)"
+      command: "[[ ! -d $HOME/.ssh ]] || stat -c '%a' $HOME/.ssh | grep -q '^700$'"
+      expect: true
+      severity: P1
+      remediation: "chmod 700 ~/.ssh"
+
+    - id: perm.config_yaml_world_readable
+      description: "config.yaml NICHT world-readable"
+      command: "stat -c '%a' $HOME/.hermes/config.yaml"
+      expect: not_in ["644", "666", "777"]
+      severity: P1
+      remediation: "chmod 600 ~/.hermes/config.yaml"
+
+    - id: perm.no_sudoers_modifications
+      description: "/etc/sudoers wurde seit letztem Audit nicht geändert"
+      command: "find /etc/sudoers /etc/sudoers.d -mtime -7 2>/dev/null"
+      expect: empty
+      severity: P0
+      remediation: "Änderung widerrufen, falls nicht von Basti autorisiert."
+
+# -----------------------------------------------------------------------------
+# PHASE 5 — Trace-Monitoring (GreyHack: 'Active Trace' = sofort disconnecten)
+# -----------------------------------------------------------------------------
+phase_5_trace_monitoring:
+  enabled: true
+  checks:
+    - id: trace.agent_running_processes
+      description: "Welche MaxClaw/Hermes-Prozesse laufen aktuell?"
+      command: "ps -eo pid,etime,user,comm | grep -E 'hermes|openclaw|maxclaw' | grep -v grep"
+      expect: documented_in_inventory
+      severity_if_orphan: P1
+      remediation: "Unbekannte Prozesse identifizieren; ggf. kill -9 nach Rückfrage."
+
+    - id: trace.outbound_connections
+      description: "Aktive ausgehende Verbindungen von agent-UID"
+      command: "ss -tnp | grep -E 'users:((\\\"bratan\\\"|,)?bratan,)'"
+      expect: subset_of_allowlist
+      severity_if_unexpected: P0
+      remediation: "Sofort netzwerk kill via ufw emergency-Deny; Telegram-Alert."
+
+    - id: trace.skill_installation_changes
+      description: "Neue Skills seit letztem Audit in ~/.hermes/skills/"
+      command: "find ~/.hermes/skills ~/.openclaw/skills -type d -newer /tmp/maxclaw-clone/security/hardening_audit_maxclaw.yaml -mtime -7 2>/dev/null"
+      expect: empty
+      severity_if_unauthorized: P1
+      remediation: "Neue Skills manuell reviewen; nur aus vertrauenswürdigen Quellen."
+
+    - id: trace.cron_modifications
+      description: "Cron-Jobs in User-Crontab seit letztem Audit verändert?"
+      command: "crontab -l > /tmp/cron-current.txt; diff /tmp/cron-last-known.txt /tmp/cron-current.txt"
+      expect: empty
+      severity: P0
+      remediation: "Diff an Basti schicken; ungewollte Jobs entfernen."
+
+    - id: trace.git_status_clean
+      description: "Git-Status: kein versehentlicher Commit auf main"
+      command: "git -C $REPO_DIR branch --show-current"
+      expect: not "main"   # wenn aktiv committed wird, muss es feature/develop sein
+      severity: P1
+      remediation: "Auf feature-Branch wechseln, dann arbeiten."
+
+# -----------------------------------------------------------------------------
+# Globale Limits
+# -----------------------------------------------------------------------------
+limits:
+  # Modell-Kosten (GreyHack-Pattern: Heartbeat = billig)
+  models:
+    heartbeat:
+      max_tokens_per_call: 2000
+      max_eur_per_month: 1.0
+    main:
+      max_tokens_per_call: 8000
+      max_eur_per_month: 20
+    heavy:
+      max_tokens_per_call: 16000
+      max_eur_per_month: 50
+    subagent:
+      max_tokens_per_call: 2000
+      max_eur_per_month: 5
+
+  # Rate-Limits pro Stunde / Tag
+  rate_limits:
+    telegram_messages_per_hour: 10
+    telegram_messages_per_day: 30
+    tool_calls_per_minute: 30
+    git_push_attempts_per_day: 5
+    crontab_modifications_per_day: 2
+
+  # Cooldowns nach P0-Alert (Verhindert Alert-Sturm)
+  cooldown_seconds_after_p0_alert: 1800
+
+# -----------------------------------------------------------------------------
+# Reporting
+# -----------------------------------------------------------------------------
+reporting:
+  output_path: "~/logs/maxclaw-security-audit-LAST.json"
+  history_keep: 30  # Anzahl alter JSON-Reports behalten
+  on_p0:
+    - telegram_message_to: "7222661188"
+      include: ["finding_id", "severity", "remediation"]
+    - sound_alert: false  # wir wollen still im Hintergrund arbeiten
+  on_p1:
+    - telegram_message_to: "7222661188"
+      daily_digest_only: true
+  on_p2:
+    - log_only: true
+
+# -----------------------------------------------------------------------------
+# Metadaten
+# -----------------------------------------------------------------------------
+greyhack_inspiration:
+  source_file: "/mnt/DATA/Programme/Steam/steamapps/common/Grey Hack/yuno-tools/hardening_audit.src"
+  mapping:
+    "PHASE 0 BACKUP-ADMIN": "phase_0_backup_admin"
+    "PHASE 1 USER-AUDIT": "phase_1_user_audit"
+    "PHASE 2 PORT-AUDIT": "phase_2_port_audit"
+    "PHASE 3 FIREWALL-EMPFEHLUNGEN": "phase_3_firewall"
+    "PHASE 4 PERMISSION-CHECK": "phase_4_permission_check"
+    "PHASE 5 TRACE-MONITORING": "phase_5_trace_monitoring"
