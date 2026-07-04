@@ -77,5 +77,38 @@ Kontextfenster, hohe Qualität.
   Implementierer, Validator) auch als Parent-Direct-Fallback effektiv. Metapher:
   Bienenkönigin befehligt ihren Schwarm. 🐝
 
+### v3.0: 5-Phasen-Queen-Workflow (NEU — konkret angewendet)
+
+Beim v3.0-Upgrade wurde genau dieses Pattern mit **5 parallelen Subagenten** gefahren. Die 5 Phasen:
+
+```
+Phase 1: Parallel Research    (3-5 Subagenten, ~5-10 min je)
+Phase 2: Immediate Fixes      (parallel im Parent)
+Phase 3: Synthesis            (merge + cross-check)
+Phase 3.5: Cross-Check        (verifiziere Artefakte existieren — NICHT vertrauen!)
+Phase 3.6: User-Anker         (2-4 Optionen zur Wahl, keine offenen Fragen)
+Phase 4: Execute & Document   (P0 first)
+Phase 5: Retrospective        (was worked, was not)
+```
+
+Konkret beim v3.0-Upgrade wurden 5 Subagenten dispatcht:
+
+| Lane | Subagent-Rolle | Liefer-Artefakte |
+|------|----------------|------------------|
+| 🔧 DB-Analyst | Sandbox-Snapshot + Diff-Engine | `greyhack-db-snapshot.sh`, `greyhack-db-analyze.py`, Cron-Workflow |
+| 🛠️ Tool-Builder-Refactor | Best-Practices aus 28 yuno-tools + MaxClaw v3.0 Settings | 6 Agent-Files neu, config.yaml v3.0 |
+| 📋 Workflow-Architekt | 5 neue autonome Crons | 5 Cron-Defs + register-workflows.sh UPDATE |
+| 📚 Skill-Set-Author | 9 Allround-Skills | 8 neue Skills + INSTALL.md + SKILL-INDEX.md |
+| 🛡️ Security-Auditor | Self-Audit + Patch-Vorlage | 20-Findings-Report + hardening-config |
+
+Nach Phase 3.6 wurden die Subagent-Ergebnisse verifiziert (`ls -la`, `bash -n`, `py_compile`,
+`yaml.safe_load`) — nicht blind vertraut. Siehe [`../AGENT-UPGRADE-2026-07-04.md`](../AGENT-UPGRADE-2026-07-04.md)
+für die ausführliche Retrospektive inkl. der **Queen-Pitfall-Checkliste**:
+
+- **Pitfall #5: Verify EVERY claim** — Subagent-Selbstauskünfte sind Selbstberichte, keine Fakten.
+  Nach jedem delegaten Task: `ls`, `bash -n`, `python3 -c`, `pyyaml.safe_load` zur Verifikation.
+- **Pitfall #10: Model-Param wird ignoriert** bei `hermes cron create` — Modell wird via
+  `cronjob action=update job_id=… provider=… model=…` nachgepinnt.
+
 ## Nächste Ausbaustufe
 → [Block 5 — Automatisierung](05-automatisierung.md)

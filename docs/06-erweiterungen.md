@@ -46,9 +46,29 @@ Bildschirm, sondern ist in deiner ganzen Umgebung präsent. (Noch experimentell.
 
 ## Unsere Erweiterungen (Basti)
 - **System-Documentation-Skill** — pflegt `~/docs/system/` als Markdown-Baum.
-- **GreyHack-Skills** — Build-Pipeline, GreyScript-Referenz, GTFOBins-DB.
+- **GreyHack-Skills** (in `~/.hermes/skills/gaming/`) — `greyhack` (Pipeline), `greyhack-greyscript` (Sprachref), `greyhack-sandbox` (greybel-js), `greyhack-hermes-api` (HTTP-Bridge).
 - **daily-briefing / session-handoff / telegram-clarification-prompt** — Betriebs-Skills.
 - Beispiel-Skill in diesem Repo: [`../skills/project-doc-sync/`](../skills/project-doc-sync/).
+
+### MaxClaw v3.0 — 9 produktive Skills (NEU)
+
+Im Repo unter [`../skills/`](../skills/) sind nicht mehr nur 1 Sample, sondern **9 produktive Skills**,
+jeder mit lauffähigem Bash/Python-Code und YAML-Frontmatter. Decision-Tree in [`../skills/SKILL-INDEX.md`](../skills/SKILL-INDEX.md).
+
+| Skill | Trigger-Keywords | Was er macht |
+|-------|------------------|--------------|
+| `sandbox-snapshot` | snapshot, backup, rsync, hardlink | rsync+hardlink-Rotation für Verzeichnis-Snapshots |
+| `sqlite-reader` | sqlite, .db, schema, pragma | Read-only DB-Inspektion mit FK-Discovery |
+| `greyscript-linter` | greybel build, *.src, pre-commit | Static-Analysis VOR `greybel build` (Pflicht-//command:, kein `str_repeat` etc.) |
+| `github-ops` | gh pr, gh issue, triage, rebase | gh-CLI Patterns für PR-Erstellung, Issue-Triage, Conflict-Resolution |
+| `bash-script-builder` | bash, set -euo pipefail, cron, template | Boilerplate-Template + Lint-Pattern + Doc-Gen |
+| `telegram-notifier` | telegram, notify, alert, watchdog | Markdown → HTML-Konversion + Watchdog-Pattern (silent on success) |
+| `knowledge-distiller` | distill, weekly review, cluster | Liest Session-Logs/Docs → destilliert Insights + Skill-Vorschläge |
+| `maxclaw-session-manager` | session, tracking, lock, cooldown | JSONL + fcntl-Lock + Duplicate-Detection |
+| `project-doc-sync` | docs, sync, system-documentation | Hält `~/docs/system/` synchron mit dem Workspace |
+
+Installation: siehe [`../skills/INSTALL.md`](../skills/INSTALL.md). Skill-Trigger sind so
+gecutten, dass `skill_view(name='<skill>')` per Hermes-Skill-Loader direkt gegriffen wird.
 
 > 💡 Eigenen Skill erstellen? Einfach sagen: „Erstelle einen Skill, der X macht."
 

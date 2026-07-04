@@ -27,12 +27,12 @@ Alle Dateien darin sind **ganz normale Markdown-Textdateien** — kein Code, les
 | Datei | Rolle | Frage, die sie beantwortet |
 |-------|-------|----------------------------|
 | **SOUL.md** | Persönlichkeit | *Wer bin ich?* Ton, Werte, Verhalten |
-| **IDENTITY.md** | Identität (kurz) | Name, Vibe, Emoji, Avatar |
-| **AGENTS.md** | Betriebshandbuch | *Wie arbeite ich?* Regeln, Prioritäten, Grenzen |
+| **IDENTITY.md** | Identität (kurz) | Name, Vibe, Emoji, Avatar — **v3.0: GreyHack-Track-Kompetenzen** |
+| **AGENTS.md** | Betriebshandbuch | *Wie arbeite ich?* — **v3.0: GreyHack-Operationen + Mission-Lifecycle** |
 | **USER.md** | über dich | Wer ist der Mensch? Name, Zeitzone, Projekte, Vorlieben |
-| **TOOLS.md** | Notizbuch | Praktische Notizen zu Tools & Workarounds |
-| **MEMORY.md** | Langzeitgedächtnis | Präferenzen, Fakten, zentrale Entscheidungen |
-| **HEARTBEAT.md** | Checkliste | Was soll periodisch geprüft werden? (siehe Block 5) |
+| **TOOLS.md** | Notizbuch | **v3.0: Syntax-Regel-Tabelle + 5 Code-Idiome + Build-Aufruf-Box** |
+| **MEMORY.md** | Langzeitgedächtnis | **v3.0: 6 Sub-Sektionen** (Missions, Tool-Registry, Build-Errors, NPC-Intel, DB-Snapshots, Lessons-Learned) |
+| **HEARTBEAT.md** | Checkliste | **v3.0: heavy/billig-Trennung** + Mission-Status |
 | **daily/** | Arbeitstagebuch | Was ist an Tag X passiert? |
 
 ### SOUL.md — die Persönlichkeit
@@ -45,6 +45,37 @@ Die obersten Anweisungen: *nie etwas ohne Freigabe veröffentlichen*, *immer Kal
 vor Terminvorschlag*, *sensible Aktionen erst nachfragen*. Lebendiges Dokument.
 > 💡 Tipp: Baue einen **täglichen Selbstverbesserungs-Loop** ein — am Ende jeder Session
 > reflektiert MaxClaw, was gut/schlecht lief, und schlägt Updates für seine Core-Dateien vor.
+
+### v3.0: GreyHack-Track in den Agent-Files
+
+MaxClaw v3.0 ist explizit auf **GreyHack** als eine Hauptkompetenz ausgerichtet. Das findet sich in mehreren Files:
+
+**IDENTITY.md v3.0:**
+- Liste der GreyHack-Operationen, die MaxClaw beherrscht (portscan, bruteforce, metaxploit-Chains, deep_recon, hardening_audit, mission_chains)
+- **Negativliste**: was MaxClaw auf KEINEN Fall tut (live pentesting, externe Systeme, Datenklau)
+- Mission-Lifecycle-States: `todo → briefing → active → blocked → done → archived`
+
+**AGENTS.md v3.0:**
+- Welche GreyHack-Tools sind erlaubt (`metaxploit`, `shell.build`, `pc.wget`, `cryptools`, `include_lib`)
+- Build-Pipeline-Checkliste (pc.wget → shell.build → delete) für jeden neuen Tool-Lauf
+- Default-Deny bleibt unangetastet: `git push main`, world-write, System-Files
+
+**TOOLS.md v3.0:**
+- **Syntax-Regel-Tabelle** als Schnellreferenz: `greybel build OHNE -u`, `//command:` erste Zeile Pflicht
+- **5 Code-Idiome** (Lib-Loader, Null-Check, Port-Scan-Loop, Home-Looter, Param-Parser)
+- **Build-Aufruf-Box** mit Copy-Paste-Befehl
+
+**MEMORY.md v3.0:**
+- 6 strukturierte Sub-Sektionen — nicht mehr ein Freitext-Eimer:
+  1. **Active Missions** (Spielwelt-Status, IPs, Ziele)
+  2. **Tool Registry** (welche .src-Datei baut was, Commit-Hashes)
+  3. **Build Errors** (bekannte greybel-Fehlermeldungen + Fix)
+  4. **NPC Intel** (welche NPCs wo, welche Texte schon gesehen)
+  5. **DB Snapshots** (Spielwelt-Inventar-Historie)
+  6. **Lessons Learned** (Bastis Vorlieben aus früheren Sessions)
+
+> 🐝 **Warum so strukturiert?** Die 5-Subagenten-Queen-Orchestration liefert pro Subagent
+> ein anderes Memory-Subset. Strukturierte Felder = LLM kann sie ohne Parsing-Hell direkt nutzen.
 
 ### MEMORY.md + Daily Notes — dauerhaftes Gedächtnis
 Die meisten KI-Tools vergessen alles beim Chat-Ende. MaxClaw nicht:

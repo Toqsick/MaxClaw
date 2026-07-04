@@ -9,6 +9,14 @@ out/
 .env.*
 secrets.yaml
 
+# Python bytecode cache (von greyhack-db-analyze.py erzeugt)
+__pycache__/
+*.pyc
+
+# Tools-Skripte sind ausführbar in tools/, aber Output landet in ~/backups/, ~/logs/
+backups/
+logs/
+
 # Laufzeit-Gedächtnis (persönlich, gehört nicht ins Repo)
 agent/daily/
 agent/MEMORY.local.md

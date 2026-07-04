@@ -1,7 +1,7 @@
 # MaxClaw Allround Skill-Set — Index & Decision-Tree
 
-Schnellübersicht aller 8 Skills mit **Trigger-Keywords** für die automatische
-Auswahl und einem **Decision-Tree**, der zeigt, wann welcher Skill greift.
+Schnellübersicht aller **9 Skills** (8 Allround + 1 Hermes-Quirks) mit **Trigger-Keywords**
+für die automatische Auswahl und einem **Decision-Tree**, der zeigt, wann welcher Skill greift.
 
 ## Skill-Index-Tabelle
 
@@ -15,6 +15,7 @@ Auswahl und einem **Decision-Tree**, der zeigt, wann welcher Skill greift.
 | **telegram-notifier**    | comms           | `telegram`, `notify`, `alert`, `silent`, `bot api`, `watchdog`, `summary` | Markdown→HTML-Notifier mit Watchdog-Modus             |
 | **knowledge-distiller**  | meta            | `distill`, `weekly review`, `reflektion`, `skill-update`, `cluster`       | Wochenrückblick + Skill-Update-Vorschläge            |
 | **maxclaw-session-manager** | workflow     | `session`, `tracking`, `lock`, `duplicate`, `cooldown`, `history`         | JSONL-Session-Log + Duplicate-Detection              |
+| **hermes-cli-quirks**    | ops / meta      | `hermes cron`, `cronjob action`, `provider drift`, `#44585`, `gh pr`      | Hermes-CLI Pitfalls + Workarounds (Pitfall #10)      |
 
 ## Decision-Tree (Wann welches Skill?)
 
@@ -39,6 +40,9 @@ Start: Was möchtest du tun?
 │
 ├── Repo-/PR-Aktion auf GitHub
 │   └── github-ops
+│
+├── Cron-Job anlegen / Model-Pin / Hermes-CLI-Probleme
+│   └── hermes-cli-quirks  (Pitfall-Tabelle, Workarounds)
 │
 ├── Wochenrückblick / "Was läuft in MaxClaw?"
 │   └── knowledge-distiller  (cron So 23:00)
@@ -66,10 +70,11 @@ Start: Was möchtest du tun?
 | Zielgruppe                  | Skills                                                                       |
 |-----------------------------|------------------------------------------------------------------------------|
 | (a) GreyHack-Operations     | sandbox-snapshot, sqlite-reader, greyscript-linter, github-ops               |
-| (b) System-Administration   | sandbox-snapshot, bash-script-builder, sqlite-reader                         |
-| (c) Git/GitHub              | github-ops, bash-script-builder                                              |
+| (b) System-Administration   | sandbox-snapshot, bash-script-builder, sqlite-reader, **hermes-cli-quirks**  |
+| (c) Git/GitHub              | github-ops, bash-script-builder, **hermes-cli-quirks**                      |
 | (d) Communications          | telegram-notifier, knowledge-distiller                                       |
 | (e) Knowledge Management    | knowledge-distiller, maxclaw-session-manager                                 |
+| (f) Hermes-Operations       | **hermes-cli-quirks**, bash-script-builder (für Cron-Wrapper)                |
 
 Jede Zielgruppe hat **mindestens 2 Skills**, die abwechselnd oder kombiniert
 genutzt werden.
