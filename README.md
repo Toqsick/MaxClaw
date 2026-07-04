@@ -23,7 +23,9 @@ kommt von sich aus auf dich zu (z. B. per Telegram).
 | **Agent-Persona** | Plain Agent → **GreyHack-Arbeiter + Assistent** (GreyHack-Track + Negativliste) | [`agent/IDENTITY.md`](agent/IDENTITY.md), [`agent/AGENTS.md`](agent/AGENTS.md) |
 | **Config-Secrets** | OpenClaw-SecretRef (`~/.openclaw/out/`) → **Hermes-native** (`~/.hermes/auth.json`, 0600, 90-Tage Rotation) | [`config/config.yaml`](config/config.yaml) |
 | **Workflows** | 3 Crons → **8 Crons** (DB-Snapshot/-Watcher, Mission-Tracker, Tool-Backup-Watch, Knowledge-Distiller, Basti-Checkin) | [`workflows/`](workflows/) |
-| **Skills** | 1 Sample → **9 produktive Skills** (8 Allround + project-doc-sync) | [`skills/`](skills/) |
+| **Skills** | 1 Sample → **9 produktive Skills** (8 Allround + 1 Hermes-Quirks + 1 Sample) | [`skills/`](skills/) |
+| **Tools** | Lokal in `~/bin/` → **als `tools/` im Repo versioniert** | [`tools/`](tools/) |
+| **Docs-Layer** | keine Sammlung → **`docs/bastimd/` + `docs/reports/`** für Verifikations-Dokus | [`docs/bastimd/`](docs/bastimd/), [`docs/reports/`](docs/reports/) |
 | **Security-Audit** | Vorlagen-Fantasie → **20 echte Findings** mit Patch-Vorlage | [`security/security-audit-2026-07-04.md`](security/security-audit-2026-07-04.md) |
 
 > 📜 Detaillierte Änderungen: [`AGENT-UPGRADE-2026-07-04.md`](AGENT-UPGRADE-2026-07-04.md) (339 Zeilen Diff-Begründung)
@@ -99,7 +101,26 @@ MaxClaw/                                          ← du bist hier
 │   ├── bash-script-builder/                      ← NEU: set -euo pipefail Template
 │   ├── telegram-notifier/                        ← NEU: Markdown→HTML + Watchdog
 │   ├── knowledge-distiller/                      ← NEU: Cluster/Top-N/Skill-Vorschläge
-│   └── maxclaw-session-manager/                  ← NEU: JSONL + fcntl Lock
+│   ├── maxclaw-session-manager/                  ← NEU: JSONL + fcntl Lock
+│   └── hermes-cli-quirks/                        ← NEU v3.0: Hermes-CLI Pitfalls (#44585, gh-Pull-Request-Bug)
+│
+├── tools/                                        ← NEU v3.0: Operations-Werkzeuge
+│   ├── README.md                                 ← Tools-Übersicht + Install-Befehle
+│   ├── greyhack-db-snapshot.sh                   ← DB-Sandbox-Snapshot (Watchdog)
+│   ├── greyhack-db-analyze.py                    ← DB-Inhalts-Extrakt (JSON)
+│   ├── maxclaw-security-audit.sh                 ← Self-Hardening (6 Phasen)
+│   └── maxclaw-config-check.sh                   ← Validierung config.yaml (14 Checks)
+│
+├── docs/                                         ← der 8-Block-Kurs + Verifikations-Layer
+│   ├── 01-grundlagen.md          bis 08-server-deployment.md
+│   ├── bastimd/                                       ← User-Aktion-Dokus
+│   │   ├── maxclaw-v3-upgrade-2026-07-04.md
+│   │   ├── greyhack-db-snapshot-2026-07-04.md
+│   │   └── security-remediation-2026-07-04.md
+│   └── reports/                                       ← v3.0-Reports
+│       ├── agent-upgrade-2026-07-04.md
+│       ├── security-audit-2026-07-04.md
+│       └── greyhack-weekly-insights-2026-07-04.md
 │
 ├── security/                                     ← NEU v3.0: Security-Pattern gespiegelt
 │   ├── policies.md                               ← was darf MaxClaw (Begründung)
@@ -184,6 +205,7 @@ in [`skills/SKILL-INDEX.md`](skills/SKILL-INDEX.md). Installation: [`skills/INST
 | `telegram-notifier` | telegram, notify, alert, watchdog | comms |
 | `knowledge-distiller` | distill, weekly review, cluster | meta |
 | `maxclaw-session-manager` | session, tracking, lock, cooldown | workflow |
+| `hermes-cli-quirks` | hermes cron, cronjob action, provider drift, #44585 | ops/meta |
 | `project-doc-sync` | docs, sync, system-documentation | docs |
 
 ### Wann welchen Skill laden?
