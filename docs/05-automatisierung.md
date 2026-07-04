@@ -42,14 +42,34 @@ Einrichten? Einfach sagen: „Ich will jeden Morgen um 7 Uhr ein Briefing." — 
 
 ## Unsere konkreten Workflows (siehe [`../workflows/`](../workflows/))
 
-| Workflow | Typ | Zeitpunkt | Zweck |
-|----------|-----|-----------|-------|
-| `daily-briefing` | Cron | tägl. 07:00 | Kompaktes Briefing per Telegram |
-| `greyhack-ci-watch` | Cron | nach Push / stündl. | greybel-Build grün? |
-| `security-audit-weekly` | Cron | Mo 09:00 | Read-Only-Audit Desktop + VM |
-| `github-pr-monitor` | Cron | 2×/Tag | Offene PRs/Issues Toqsick-Repos |
+| Workflow | Typ | Takt | Deliver | Zweck |
+|----------|-----|------|---------|-------|
+| `daily-briefing` | Cron | tägl. 07:00 | telegram | Kompaktes Briefing per Telegram |
+| `greyhack-ci-watch` | Cron | stündl. | telegram | greybel-Build grün nach Commit? |
+| `greyhack-tool-builder` | Cron | alle 2h | telegram | Sandbox-Refactoring, 1 Baustelle pro Lauf |
+| `github-pr-monitor` | Cron | 09,17 | telegram | Offene PRs/Issues Toqsick-Repos |
+| `greyhack-db-snapshot` | Cron | alle 6h | telegram | DB-Sandbox-Clone + Größen-Diff |
+| `greyhack-db-watcher` | Cron | */30 min | telegram | DB-Inhalt-Diff (Computer, Mails, Bänke) |
+| `greyhack-mission-tracker` | Cron | alle 4h | telegram | Brief ↔ MISSION-LOG synchronisieren |
+| `greyhack-tool-backup-watch` | Cron | alle 6h | local | Dirty-Tree + 3-Tage-Push-Frist |
+| `greyhack-knowledge-distiller` | Cron | So 22:00 | local | Wochen-Synthese → `~/docs/system/greyhack-weekly-insights-*.md` |
+| `greyhack-basti-checkin` | Cron | Mo/Mi/Fr 20:00 | telegram | Kumpel-Anstoß, max. 12 Zeilen |
+| `security-audit-weekly` | Cron | Mo 09:00 | telegram | Read-Only-Audit Desktop + VM |
 
-Registrieren: `./workflows/register-workflows.sh`
+(v3.0: **8 neue Crons** hinzugekommen — siehe `WORKFLOWS-V2-2026-07-04.md`)
+
+Registrieren: `./workflows/register-workflows.sh [--add NAME | --list | --dry-run]`
+
+### Skills als Cron-Backbone (v3.0)
+
+Jeder neue Cron sollte **einen Skill nutzen** statt Freitext-Prompts. Vorteile:
+- Prompt wird zwischen Sessions portierbar (git-versioniert)
+- Tests möglich (skill-view → Validierung der YAML-Frontmatter)
+- Andere Agents im Multi-Agent-Setup können denselben Skill lesen
+
+Workflow z.B.: `greyhack-db-watcher` lädt `sandbox-snapshot` + `sqlite-reader`. Beide Skills
+sind in v3.0 in [`../skills/`](../skills/) definiert und via [`../skills/INSTALL.md`](../skills/INSTALL.md)
+installierbar.
 
 ## Häufige Fehler
 - ❌ Teures Hauptmodell für den Heartbeat → Tokens verbrennen für „nichts".

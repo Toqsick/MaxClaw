@@ -44,8 +44,28 @@ Das ist auch der Ansatz von **Nemo Claw** (NVIDIAs Enterprise-OpenClaw).
 Siehe [`../config/config.yaml`](../config/config.yaml).
 
 ## Risiko 3: Leaks von Zugangsdaten
-- MaxClaw nutzt **SecretRef**: Keys/Tokens/Passwörter werden **verschlüsselt** in einem
-  separaten Ordner gespeichert, nicht im Klartext in der Config. Keine 100%-Garantie.
+
+### MaxClaw v3.0 — Hermes-native Secrets (P0-Audit-Fix)
+
+In v3.0 wurde von OpenClaw-SecretRef auf **Hermes-native Authentifizierung** umgestellt.
+Begründung aus dem Audit (`security-audit-2026-07-04.md` → P0.backup.secretref_exists):
+
+- **OpenClaw-SecretRef** (`~/.openclaw/out/`, separater verschlüsselter Ordner) existiert auf
+  Bastis Setup nicht — Hermes-nativ ist die einzige lauffähige Variante.
+- **Hermes-native** nutzt `~/.hermes/auth.json` mit `mode 0600`. Token-Storage ist nicht so
+  fancy wie SecretRef, dafür **real existent und sofort nutzbar**.
+- Rotation: **90 Tage** via `cronjob action=update` (`key_rotation.md`).
+
+```yaml
+# config.yaml v3.0
+secrets:
+  backend: hermes_native
+  path: "~/.hermes/auth.json"
+  rotation_days: 90
+```
+
+### Allgemeine Grundregeln
+
 - **Grundregel:** Geh davon aus, dass **alles**, was der Agent sehen kann, theoretisch leaken
   kann (Logs, Memory-Dateien, Screenshots).
 - **Least Privilege:** API-Keys nur mit **kleinstmöglicher** Berechtigung (nur Lesezugriff, wenn
@@ -56,11 +76,28 @@ Siehe [`../config/config.yaml`](../config/config.yaml).
 - **Beste Empfehlung:** MaxClaw **nie direkt aufs Betriebssystem** — sondern in einem
   **Docker-Container**, am besten auf einem **VPS**. Worst Case: nur der Container zerschießt,
   Server bleibt heil. → [08-server-deployment.md](08-server-deployment.md).
-
 ## Eingebautes Security-Audit
+
 MaxClaw kann sich selbst prüfen: „Führe einen Sicherheitscheck durch." Er prüft z. B., ob das
 Gateway-Interface offen im Internet erreichbar ist, ob Dateiberechtigungen zu offen sind, etc.
 > 💡 Noch besser: als **wöchentlichen Cron-Job** einrichten → [`../workflows/security-audit-weekly.md`](../workflows/security-audit-weekly.md).
+
+### v3.0 Self-Audit MaxClaw (NEU — 2026-07-04)
+
+Im Repo: [`../security-audit-2026-07-04.md`](../security-audit-2026-07-04.md) — vollständiger
+20-Findings-Report (2 P0 / 5 P1 / 3 P2 / 10 OK). Pattern gespiegelt aus GreyHack
+`hardening_audit.src`. Tool: [`~/bin/maxclaw-security-audit.sh`](../security/) (6-Phasen-JSON-Output).
+
+**Wichtigste Erkenntnisse:**
+- Hermes-Live-`config.yaml` ist **Agent-write-protected** (Hermes-Sicherheitsfeature) — P1-Fixes
+  brauchen manuelle Basti-Edits via `hermes config edit`. Siehe
+  `~/docs/system/security-remediation-2026-07-04.md`.
+- World-Writable Lockfiles (uv, venv, hermes) wurden 2026-07-04 per `chmod o-w` gefixt.
+- 0.0.0.0-Listener auf Port 8200 (nicht zuordenbar) muss Basti manuell investigieren.
+
+**MaxClaw v3.1-Proposed Config:** [`../config/config.yaml.v3.1.proposed`](../config/config.yaml.v3.1.proposed)
+— gehärtete Version mit verschärften write_paths, Skill-Limits, Network-Isolation, Rate-Limits.
+Aktivierung erfordert Bastis Review + manuellen Edit.
 
 ## Die goldene Regel
 > **Behandle MaxClaw wie einen Praktikanten mit Superkräften.** Extrem nützlich, aber schau
