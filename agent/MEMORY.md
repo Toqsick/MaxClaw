@@ -23,7 +23,7 @@
 
 ## Zentrale Entscheidungen
 
-- MaxClaw läuft isoliert (Docker/VPS), nicht direkt aufs OS. Default-Deny in config.yaml.
+- MaxClaw läuft isoliert (Docker/VPS), nicht direkt aufs OS. Default-Deny in openclaw.json (`tools.exec.mode: allowlist`) + exec-approvals.json.
 - Multi-Agent-Orchestrierung ist das eigentliche Lernziel (GreyHack = Testlabor).
 
 ## GreyHack-Profil (NEU v3.0)

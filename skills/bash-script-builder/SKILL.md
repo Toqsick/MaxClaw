@@ -2,7 +2,7 @@
 name: bash-script-builder
 description: Generiert produktionsreife Bash-Skripte mit set -euo pipefail, Lint-Self-Check (shellcheck wenn vorhanden), strukturierter Doku und Verifikations-Snippet. Trigger bei jeder neuen Automatisierung (cron, one-shot, Tool-Helper).
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
@@ -12,7 +12,7 @@ triggers:
   - refactor: bestehende .sh ohne set -euo pipefail
   - manual: "new-bash-script.sh <name>"
 metadata:
-  hermes:
+  openclaw:
     tags:
       - code
       - bash
@@ -30,7 +30,7 @@ fehlschlagen.
 
 - Jedes Mal, wenn MaxClaw ein neues `.sh` schreibt.
 - Beim Refactor von Alt-Skripten ohne `set -euo pipefail`.
-- Für Cron-Helper, die mit `hermes cron create` registriert werden sollen.
+- Für Cron-Helper, die mit `openclaw cron create` registriert werden sollen.
 
 ## Pattern
 

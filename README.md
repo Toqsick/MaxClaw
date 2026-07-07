@@ -16,14 +16,34 @@ kommt von sich aus auf dich zu (z. B. per Telegram).
 
 ---
 
+## 🔄 OpenClaw-Alignment (2026-07-07)
+
+Das Repo ist jetzt **durchgängig OpenClaw-kompatibel**. Die Runtime-Config liegt OpenClaw-nativ
+als **`config/openclaw.json`** (JSON5) statt der früheren Hermes-YAML `config.yaml`:
+
+| Bereich | vorher (Hermes-Hybrid) | jetzt (OpenClaw-nativ) |
+|---------|------------------------|------------------------|
+| Runtime-Config | `config/config.yaml` (YAML) | [`config/openclaw.json`](config/openclaw.json) (JSON5) |
+| Command-Policy | `permissions.tools.terminal` in der YAML | [`config/exec-approvals.json`](config/exec-approvals.json) |
+| GreyHack-Domäne | `greyhack:`-Block in der YAML | [`config/greyhack.yaml`](config/greyhack.yaml) (App-Daten, nicht von OpenClaw geparst) |
+| Secrets | `hermes_native` (`~/.hermes/auth.json`) | `openclaw secrets` + `auth.profiles` |
+| CLI / Pfade | `hermes cron`, `~/.hermes/` | `openclaw cron`, `~/.openclaw/` |
+| Skill | `hermes-cli-quirks` | `openclaw-cli-quirks` |
+
+> **„Hermes V7"** bleibt: das ist ein **eigenes Projekt** von Basti (`Toqsick/hermes-v7`), an dem
+> MaxClaw *arbeitet* — nicht die Runtime. Ebenso `hermes-webui`.
+> P0 vor Aktivierung auf dem Host: `openclaw config validate && openclaw doctor --fix`.
+
+---
+
 ## 🆕 Was ist neu in v3.0 (2026-07-04)
 
 | Bereich | v2 → v3.0 | Datei |
 |---------|-----------|-------|
 | **Agent-Persona** | Plain Agent → **GreyHack-Arbeiter + Assistent** (GreyHack-Track + Negativliste) | [`agent/IDENTITY.md`](agent/IDENTITY.md), [`agent/AGENTS.md`](agent/AGENTS.md) |
-| **Config-Secrets** | OpenClaw-SecretRef (`~/.openclaw/out/`) → **Hermes-native** (`~/.hermes/auth.json`, 0600, 90-Tage Rotation) | [`config/config.yaml`](config/config.yaml) |
+| **Config-Secrets** | OpenClaw-SecretRef → **`openclaw secrets`** + `auth.profiles` (90-Tage Rotation) | [`config/openclaw.json`](config/openclaw.json) |
 | **Workflows** | 3 Crons → **8 Crons** (DB-Snapshot/-Watcher, Mission-Tracker, Tool-Backup-Watch, Knowledge-Distiller, Basti-Checkin) | [`workflows/`](workflows/) |
-| **Skills** | 1 Sample → **9 produktive Skills** (8 Allround + 1 Hermes-Quirks + 1 Sample) | [`skills/`](skills/) |
+| **Skills** | 1 Sample → **9 produktive Skills** (8 Allround + 1 OpenClaw-Quirks + 1 Sample) | [`skills/`](skills/) |
 | **Tools** | Lokal in `~/bin/` → **als `tools/` im Repo versioniert** | [`tools/`](tools/) |
 | **Docs-Layer** | keine Sammlung → **`docs/bastimd/` + `docs/reports/`** für Verifikations-Dokus | [`docs/bastimd/`](docs/bastimd/), [`docs/reports/`](docs/reports/) |
 | **Security-Audit** | Vorlagen-Fantasie → **20 echte Findings** mit Patch-Vorlage | [`security/security-audit-2026-07-04.md`](security/security-audit-2026-07-04.md) |
@@ -45,7 +65,7 @@ aber konkret auf **MaxClaw v3.0** und unsere Projekte gemünzt.
 | 4 | Kommunikation & Multi-Agent | [docs/04-kommunikation-multiagent.md](docs/04-kommunikation-multiagent.md) | Gateway, Channels, Sessions, Subagenten + Queen-Pattern |
 | 5 | Automatisierung | [docs/05-automatisierung.md](docs/05-automatisierung.md) | **Heartbeat & 8 Cron-Jobs** |
 | 6 | Erweiterungen | [docs/06-erweiterungen.md](docs/06-erweiterungen.md) | **9 Skills** + Plugins + MCP + CLI-Tools |
-| 7 | Security & Risiken | [docs/07-security.md](docs/07-security.md) | Hermes-native Secrets, **Audit-Findings**, Default-Deny |
+| 7 | Security & Risiken | [docs/07-security.md](docs/07-security.md) | OpenClaw-native Secrets, **Audit-Findings**, Default-Deny |
 | 8 | Server-Deployment | [docs/08-server-deployment.md](docs/08-server-deployment.md) | VPS + Docker + Reverse Proxy sicher aufsetzen |
 
 ---
@@ -72,9 +92,10 @@ MaxClaw/                                          ← du bist hier
 │   ├── MEMORY.md                 ← v3.0: 6 Sub-Sektionen
 │   └── HEARTBEAT.md              ← v3.0: heavy/billig-Trennung
 │
-├── config/
-│   ├── config.yaml               ← v3.0: Hermes-native Secrets + GreyHack-Block
-│   └── config.yaml.v3.1.proposed ← NEU: gehärtete Config (Review ausstehend)
+├── config/                                       ← OpenClaw-nativ (JSON5 + Domänen-YAML)
+│   ├── openclaw.json             ← kanonische OpenClaw-Runtime-Config
+│   ├── exec-approvals.json       ← Command-Allowlist/Denylist (greybel/git/rm/…)
+│   └── greyhack.yaml             ← GreyHack-Domänen-Daten (nicht von OpenClaw geparst)
 │
 ├── workflows/                                    ← 8 produktive Crons (siehe docs/05)
 │   ├── daily-briefing.md                         (07:00 Briefing per Telegram)
@@ -102,14 +123,14 @@ MaxClaw/                                          ← du bist hier
 │   ├── telegram-notifier/                        ← NEU: Markdown→HTML + Watchdog
 │   ├── knowledge-distiller/                      ← NEU: Cluster/Top-N/Skill-Vorschläge
 │   ├── maxclaw-session-manager/                  ← NEU: JSONL + fcntl Lock
-│   └── hermes-cli-quirks/                        ← NEU v3.0: Hermes-CLI Pitfalls (#44585, gh-Pull-Request-Bug)
+│   └── openclaw-cli-quirks/                      ← OpenClaw-CLI Pitfalls (cron-pin, provider-drift, gh-token)
 │
 ├── tools/                                        ← NEU v3.0: Operations-Werkzeuge
 │   ├── README.md                                 ← Tools-Übersicht + Install-Befehle
 │   ├── greyhack-db-snapshot.sh                   ← DB-Sandbox-Snapshot (Watchdog)
 │   ├── greyhack-db-analyze.py                    ← DB-Inhalts-Extrakt (JSON)
 │   ├── maxclaw-security-audit.sh                 ← Self-Hardening (6 Phasen)
-│   └── maxclaw-config-check.sh                   ← Validierung config.yaml (14 Checks)
+│   └── maxclaw-config-check.sh                   ← Validierung openclaw.json + exec-approvals.json + greyhack.yaml
 │
 ├── docs/                                         ← der 8-Block-Kurs + Verifikations-Layer
 │   ├── 01-grundlagen.md          bis 08-server-deployment.md
@@ -144,7 +165,7 @@ cd MaxClaw
 ./setup.sh
 
 # 3. (v3.0) Skills installieren — siehe skills/INSTALL.md
-# Symlink in den Hermes-Skill-Pfad:
+# Symlink in den OpenClaw-Skill-Pfad:
 ./skills/INSTALL.md       # zeigt die genauen Befehle
 
 # 4. (Optional) Workflows als Cron-Jobs registrieren
@@ -205,7 +226,7 @@ in [`skills/SKILL-INDEX.md`](skills/SKILL-INDEX.md). Installation: [`skills/INST
 | `telegram-notifier` | telegram, notify, alert, watchdog | comms |
 | `knowledge-distiller` | distill, weekly review, cluster | meta |
 | `maxclaw-session-manager` | session, tracking, lock, cooldown | workflow |
-| `hermes-cli-quirks` | hermes cron, cronjob action, provider drift, #44585 | ops/meta |
+| `openclaw-cli-quirks` | openclaw cron, cron pin, provider drift, config protected | ops/meta |
 | `project-doc-sync` | docs, sync, system-documentation | docs |
 
 ### Wann welchen Skill laden?
@@ -255,13 +276,13 @@ Siehe auch [`workflows/greyhack-*.md`](workflows/) für die volle Workflow-Liste
 ## 🔐 Security (v3.0 — neue Architektur)
 
 **Defaults sind strikt:**
-- `permissions.default: deny`
-- `permissions.tools.terminal.deny` enthält: `rm -rf*`, `git push*main*`, `sudo*`, `curl* | *sh`
-- `permissions.tools.browser.enabled: false` (Prompt-Injection-Schutz)
-- `secrets.backend: hermes_native` mit `~/.hermes/auth.json` (mode 0600)
-- `secrets.rotation_days: 90`
-- `confirmations.require_before`: send_message, publish, delete_outside_workspace, git_push_main,
-  greyhack_strike, greyhack_money_transfer, greyhack_account_delete
+- `tools.exec.mode: allowlist` + `askFallback: deny` (Default-Deny)
+- `exec-approvals.json` deny enthält: `rm -rf*`, `git push*main*`, `sudo*`, `curl* | *sh`, `greybel build -u*`
+- `tools.deny: ["browser", "canvas", "group:media"]` (Prompt-Injection- + CPU-Schutz)
+- Secrets OpenClaw-nativ via `openclaw secrets` + `auth.profiles` (90-Tage Rotation)
+- `toolsBySender`: nur Bastis Chat-ID darf `group:runtime`/`group:fs` triggern
+- Domänen-Gates in `agent/AGENTS.md`: greyhack_strike, money_transfer, account_delete
+  (kein OpenClaw-Runtime-Äquivalent → als Policy geführt)
 
 **Audit-Durchlauf 2026-07-04:** 20 Findings, davon 2 P0, 5 P1, 3 P2, 10 OK.
 Siehe [`security-audit-2026-07-04.md`](security-audit-2026-07-04.md).
@@ -277,7 +298,7 @@ löschen.
 
 | Tool | Zweck | Pfad |
 |------|-------|------|
-| `maxclaw-config-check.sh` | Validiert `config.yaml` (14 Checks) | `~/bin/maxclaw-config-check.sh` |
+| `maxclaw-config-check.sh` | Validiert `openclaw.json`+`exec-approvals.json`+`greyhack.yaml` | `~/bin/maxclaw-config-check.sh` |
 | `maxclaw-security-audit.sh` | Self-Hardening (6 Phasen, JSON-Output) | `~/bin/maxclaw-security-audit.sh` |
 | `greyhack-db-snapshot.sh` | DB-Sandbox-Snapshot (Watchdog) | `~/bin/greyhack-db-snapshot.sh` |
 | `greyhack-db-analyze.py` | DB-Inhalts-Extrakt (JSON-Output) | `~/bin/greyhack-db-analyze.py` |
@@ -312,11 +333,11 @@ eingesetzt — siehe `AGENT-UPGRADE-2026-07-04.md` für die 5 Phasen.
 - ✅ **8 MaxClaw-Crons aktiv** (alle live-getestet, status=ok)
 - ✅ **9 Skills** produktiv (8 neue + 1 Sample)
 - ✅ **20 Security-Findings** dokumentiert mit Patch-Vorlage
-- ✅ **Hermes-native Secrets** statt OpenClaw-SecretRef (P0-Audit-Fix)
+- ✅ **OpenClaw-native Secrets** via `openclaw secrets` + `auth.profiles`
 - ✅ **DB-Sandbox-Pipeline** (Snapshot alle 6h, Diff alle 30min)
 - ✅ **GreyHack-Arbeiter-Persona** mit klarer Negativliste
-- ⚠️ **P1-Fixes** in `~/hermes/config.yaml` brauchen Basti manuell via `hermes config edit`
-  (siehe `~/docs/system/security-remediation-2026-07-04.md`)
+- ⚠️ **P1-Fixes** in `~/.openclaw/openclaw.json` brauchen Basti manuell via `openclaw config`
+  (danach `openclaw config validate && openclaw doctor --fix`; siehe `~/docs/system/security-remediation-2026-07-04.md`)
 
 ---
 

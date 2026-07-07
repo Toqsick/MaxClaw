@@ -2,7 +2,7 @@
 name: sandbox-snapshot
 description: Erstellt rotierende Verzeichnis-Snapshots (GreyHack-DB, Tool-Repos) mit rsync+hardlink und liefert einen Diff-Report für Änderungs-Detection. Trigger bei cron-gesteuerten Backups oder vor größeren Änderungen.
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
@@ -11,7 +11,7 @@ triggers:
   - pre-mutation: vor jedem großen Schreibvorgang (Build, Update, Reset)
   - manual: bei Bedarf via `snapshot.sh <dir>`
 metadata:
-  hermes:
+  openclaw:
     tags:
       - filesystem
       - backup
@@ -103,8 +103,8 @@ rsync -a --delete /path/to/snap-20260704-120000/ "$SRC/"
 
 ```cron
 # stündlich: Sandbox + GreyHack-DB
-0 * * * * /home/bratan/.hermes/skills/sandbox-snapshot/scripts/snapshot.sh \
+0 * * * * /home/bratan/.openclaw/skills/sandbox-snapshot/scripts/snapshot.sh \
     /home/bratan/.local/share/GreyHack 24
-0 * * * * /home/bratan/.hermes/skills/sandbox-snapshot/scripts/snapshot.sh \
+0 * * * * /home/bratan/.openclaw/skills/sandbox-snapshot/scripts/snapshot.sh \
     /home/bratan/maxclaw-tools 24
 ```

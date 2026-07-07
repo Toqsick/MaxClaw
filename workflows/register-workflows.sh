@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # =============================================================================
-# register-workflows.sh — registriert MaxClaw-Workflows als Hermes-Cron-Jobs
+# register-workflows.sh — registriert MaxClaw-Workflows als OpenClaw-Cron-Jobs
 # =============================================================================
 # Konkret auf Bastis Setup zugeschnitten:
-#   - CLI: hermes (openclaw-CLI gibt's auf dieser Instanz nicht)
+#   - CLI: openclaw  (Flag-Namen ggf. mit `openclaw cron --help` gegen die
+#          installierte Version verifizieren — OpenClaw ändert sich schnell)
 #   - GreyHack-Skills angehängt, damit der Agent Build-Pipeline/Sandbox-Patterns kennt
 #   - Deliver: telegram:7222661188 (Bastis DM, sonst geht's ins Default)
 #   - Bestehende Jobs bleiben unberührt (z. B. yuno-morning-briefing 08:00)
@@ -23,8 +24,8 @@ warn() { echo -e "${YELLOW}⚠${NC} $*"; }
 err()  { echo -e "${RED}✗${NC} $*" >&2; }
 
 # --- Voraussetzungen prüfen --------------------------------------------------
-if ! command -v hermes >/dev/null 2>&1; then
-    err "hermes CLI nicht gefunden."; exit 1
+if ! command -v openclaw >/dev/null 2>&1; then
+    err "openclaw CLI nicht gefunden."; exit 1
 fi
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -130,7 +131,7 @@ for entry in "${JOBS[@]}"; do
     fi
 
     # --- Idempotenz: prüfen, ob Job mit gleichem Namen schon existiert ----------
-    if hermes cron list 2>/dev/null | grep -qE "[[:space:]]${name}[[:space:]]"; then
+    if openclaw cron list 2>/dev/null | grep -qE "[[:space:]]${name}[[:space:]]"; then
         info "  = $name  ($schedule) — bereits vorhanden, übersprungen (idempotent)"
         continue
     fi
@@ -153,31 +154,31 @@ for entry in "${JOBS[@]}"; do
         done
     fi
 
-    # Modell + Schedule + Deliver setzen
-    # ACHTUNG: hermes cron create hat KEIN --model (Modell wird nachträglich
-    # via cronjob action=update mit model+provider gesetzt, siehe README).
-    # Wir sammeln die model_args nur für die zweite Stufe unten.
+    # Modell setzen
+    # ACHTUNG: `openclaw cron add` setzt das Modell nicht zuverlässig per Ad-hoc-Flag
+    # (siehe Skill openclaw-cli-quirks, Pitfall #1). Modell wird nachträglich über den
+    # Job-/Session-Provider gepinnt. Wir sammeln model_args nur für die zweite Stufe.
     model_args=()
     if [[ -n "$model" && "$model" != "shell" ]]; then
         model_args+=("$model")
     fi
 
-    # Für "shell"-Jobs wird der File-Inhalt als --command registriert;
-    # sonst als Prompt (positional). Beides ist mit hermes cron create kompatibel.
+    # Für "shell"-Jobs wird der File-Inhalt als --command registriert; sonst als
+    # --message (Prompt). Flag-Namen ggf. mit `openclaw cron --help` verifizieren.
     if [[ "$model" == "shell" ]]; then
         payload_args=(--command "$(cat "$prompt_file")")
     else
-        payload_args=("$(cat "$prompt_file")")
+        payload_args=(--message "$(cat "$prompt_file")")
     fi
 
     # Job anlegen — Output einfangen, ID extrahieren
-    out="$(hermes cron create "$schedule" "${payload_args[@]}" \
+    out="$(openclaw cron add --cron "$schedule" "${payload_args[@]}" \
             --name "$name" --deliver "$job_deliver" \
             --workdir "$REPO_DIR" \
             "${skill_args[@]}" 2>&1)" \
         || { err "    Fehler bei $name: $out"; continue; }
 
-    # Hermes gibt typisch 'Created job X' oder die ID aus
+    # OpenClaw gibt typisch 'Created job X' oder die ID aus
     jid="$(echo "$out" | grep -oE '[a-f0-9]{12,}' | head -1)"
     [[ -n "$jid" ]] && created_ids+=("$jid") && info "    → $jid" || info "    → $out"
 done
@@ -198,7 +199,7 @@ note="$REPO_DIR/cron-jobs.md"
         echo "- **$name** (\`$schedule\`) → \`$wf\`"
     done
     echo ""
-    echo "Verifizieren: \`hermes cron list\`"
+    echo "Verifizieren: \`openclaw cron list\`"
     echo ""
     echo "## Hilfe"
     echo '```bash'
@@ -210,4 +211,4 @@ note="$REPO_DIR/cron-jobs.md"
 } > "$note"
 
 info "→ $note aktualisiert."
-info "Fertig. Übersicht: hermes cron list"
+info "Fertig. Übersicht: openclaw cron list"

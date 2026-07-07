@@ -1,5 +1,7 @@
 # MaxClaw Security Audit — 2026-07-04
 
+> **📌 Historischer Stand (2026-07-04).** Die MaxClaw-Runtime wurde am 2026-07-07 auf **OpenClaw** migriert (Config: `config/openclaw.json` + `exec-approvals.json`, siehe README). Referenzen unten auf `hermes …`, `~/.hermes/` oder `config.yaml` beschreiben den damaligen Stand und werden bewusst nicht rückwirkend umgeschrieben.
+
 > **Auditor:** MaxClaw Security-Auditor (read-only)
 > **Repo:** `/tmp/maxclaw-clone/`
 > **Inspiration:** `yuno-tools/hardening_audit.src` (GreyHack) → adaptiert auf Linux/MaxClaw

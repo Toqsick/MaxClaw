@@ -1,5 +1,7 @@
 # GreyHack DB Snapshot & Analyse — Systemdokumentation
 
+> **📌 Historischer Stand (2026-07-04).** Die MaxClaw-Runtime wurde am 2026-07-07 auf **OpenClaw** migriert (Config: `config/openclaw.json` + `exec-approvals.json`, siehe README). Referenzen unten auf `hermes …`, `~/.hermes/` oder `config.yaml` beschreiben den damaligen Stand und werden bewusst nicht rückwirkend umgeschrieben.
+
 **Datum:** 2026-07-04
 **Autor:** Hermes Agent / MaxClaw Projekt
 **Status:** ✅ Aktiv

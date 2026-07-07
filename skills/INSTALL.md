@@ -1,7 +1,7 @@
 # MaxClaw Allround Skill-Set — Installation
 
-Dieses Dokument beschreibt, wie die **9 Skills** (8 Allround + 1 Hermes-Quirks) in MaxClaws
-Hermes-Workspace installiert und in `setup.sh` integriert werden.
+Dieses Dokument beschreibt, wie die **9 Skills** (8 Allround + 1 OpenClaw-Quirks) in MaxClaws
+OpenClaw-Workspace installiert und in `setup.sh` integriert werden.
 
 ## Übersicht
 
@@ -15,7 +15,7 @@ Hermes-Workspace installiert und in `setup.sh` integriert werden.
 | F | telegram-notifier    | comms / watchdog      | Bot-API-Wrapper mit silent-on-success       |
 | G | knowledge-distiller  | meta / reflection     | Wochenrückblick aus Logs/Docs               |
 | H | maxclaw-session-manager | workflow / tracking | JSONL-Session-Log + Repeat-Detection        |
-| **I** | **hermes-cli-quirks** | **ops / meta**     | **Hermes-CLI Pitfalls (#44585, model-pin, config-protected, gh-token)** |
+| **I** | **openclaw-cli-quirks** | **ops / meta**     | **OpenClaw-CLI Pitfalls (cron-pin, provider-drift, config-protected, gh-token)** |
 
 ## Voraussetzungen
 
@@ -23,7 +23,7 @@ Hermes-Workspace installiert und in `setup.sh` integriert werden.
   sind Linux/macOS-nativ).
 - `bash ≥ 4`, `python3 ≥ 3.9`, `sqlite3` (CLI), `curl`, `rsync`, `gh` (für
   github-ops), `shellcheck` (optional für bash-builder-Lint).
-- Hermes-Workspace: `~/.hermes/skills/` (oder `~/.openclaw/skills/`).
+- OpenClaw-Workspace: `~/.openclaw/skills/`.
 
 ## Installations-Schritte
 
@@ -34,35 +34,35 @@ cd /tmp/maxclaw-clone   # oder dein lokaler Pfad
 git pull                 # aktuelle Skills holen
 ```
 
-### 2. Skills nach `~/.hermes/skills/` kopieren
+### 2. Skills nach `~/.openclaw/skills/` kopieren
 
 ```bash
 # Symlinks (Empfehlung — Updates im Repo sofort verfügbar):
 for s in sandbox-snapshot sqlite-reader greyscript-linter github-ops \
          bash-script-builder telegram-notifier knowledge-distiller \
-         maxclaw-session-manager hermes-cli-quirks; do
-  ln -sf "$(pwd)/skills/$s" "$HOME/.hermes/skills/$s"
+         maxclaw-session-manager openclaw-cli-quirks; do
+  ln -sf "$(pwd)/skills/$s" "$HOME/.openclaw/skills/$s"
 done
 
 # ODER harte Kopie (kein Live-Update):
 for s in sandbox-snapshot sqlite-reader greyscript-linter github-ops \
          bash-script-builder telegram-notifier knowledge-distiller \
-         maxclaw-session-manager hermes-cli-quirks; do
-  cp -r "skills/$s" "$HOME/.hermes/skills/"
+         maxclaw-session-manager openclaw-cli-quirks; do
+  cp -r "skills/$s" "$HOME/.openclaw/skills/"
 done
 ```
 
 ### 3. Skripte ausführbar machen
 
 ```bash
-find ~/.hermes/skills/{sandbox-snapshot,sqlite-reader,greyscript-linter,github-ops,bash-script-builder,telegram-notifier,knowledge-distiller,maxclaw-session-manager,hermes-cli-quirks}/scripts \
+find ~/.openclaw/skills/{sandbox-snapshot,sqlite-reader,greyscript-linter,github-ops,bash-script-builder,telegram-notifier,knowledge-distiller,maxclaw-session-manager,openclaw-cli-quirks}/scripts \
      -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} +
 ```
 
 ### 4. Telegram-Token setzen (für telegram-notifier)
 
 ```bash
-# In ~/.bashrc oder ~/.config/hermes/env:
+# In ~/.bashrc oder ~/.config/openclaw/env:
 export TG_BOT_TOKEN="123456:ABC-DEF..."
 export TG_CHAT_ID="7222661188"
 ```
@@ -84,7 +84,7 @@ info "Installiere Allround-Skill-Set (9 Skills)..."
 SKILL_SRC="$REPO_DIR/skills"
 for s in sandbox-snapshot sqlite-reader greyscript-linter github-ops \
          bash-script-builder telegram-notifier knowledge-distiller \
-         maxclaw-session-manager hermes-cli-quirks; do
+         maxclaw-session-manager openclaw-cli-quirks; do
     [[ -d "$SKILL_SRC/$s" ]] || { warn "  fehlt: $s"; continue; }
     cp -r "$SKILL_SRC/$s" "$SKILL_DST/"
     info "  + $s"
@@ -110,22 +110,22 @@ declare -a JOBS=(
 
 ```bash
 # 1) Alle Skills sichtbar?
-ls ~/.hermes/skills/ | grep -E '(sandbox-snapshot|sqlite-reader|greyscript-linter|github-ops|bash-script-builder|telegram-notifier|knowledge-distiller|maxclaw-session-manager|hermes-cli-quirks)'
+ls ~/.openclaw/skills/ | grep -E '(sandbox-snapshot|sqlite-reader|greyscript-linter|github-ops|bash-script-builder|telegram-notifier|knowledge-distiller|maxclaw-session-manager|openclaw-cli-quirks)'
 
 # 2) YAML-Frontmatter gültig?
 for s in sandbox-snapshot sqlite-reader greyscript-linter github-ops \
          bash-script-builder telegram-notifier knowledge-distiller \
-         maxclaw-session-manager hermes-cli-quirks; do
-  head -1 "$HOME/.hermes/skills/$s/SKILL.md" | grep -q '^---$' && echo "OK $s"
+         maxclaw-session-manager openclaw-cli-quirks; do
+  head -1 "$HOME/.openclaw/skills/$s/SKILL.md" | grep -q '^---$' && echo "OK $s"
 done
 
 # 3) Smoke-Tests der wichtigsten Skripte
-~/.hermes/skills/maxclaw-session-manager/scripts/session.py start test
-~/.hermes/skills/maxclaw-session-manager/scripts/session.py finish test 0
-~/.hermes/skills/maxclaw-session-manager/scripts/session.py last test
+~/.openclaw/skills/maxclaw-session-manager/scripts/session.py start test
+~/.openclaw/skills/maxclaw-session-manager/scripts/session.py finish test 0
+~/.openclaw/skills/maxclaw-session-manager/scripts/session.py last test
 
 # 4) Snapshot-Trockenlauf
-~/.hermes/skills/sandbox-snapshot/scripts/snapshot.sh "$HOME" 3
+~/.openclaw/skills/sandbox-snapshot/scripts/snapshot.sh "$HOME" 3
 ```
 
 ## Deinstallation
@@ -133,8 +133,8 @@ done
 ```bash
 for s in sandbox-snapshot sqlite-reader greyscript-linter github-ops \
          bash-script-builder telegram-notifier knowledge-distiller \
-         maxclaw-session-manager hermes-cli-quirks; do
-  rm -rf "$HOME/.hermes/skills/$s"
+         maxclaw-session-manager openclaw-cli-quirks; do
+  rm -rf "$HOME/.openclaw/skills/$s"
 done
 ```
 
@@ -142,4 +142,4 @@ done
 
 Da das Skill-Set im MaxClaw-Repo versioniert ist (`version: x.y.z` im
 Frontmatter), reicht ein `git pull` im Repo-Klon + ggf. neue Symlinks.
-Hermes erkennt aktualisierte SKILL.md automatisch beim nächsten Start.
+OpenClaw erkennt aktualisierte SKILL.md automatisch beim nächsten Start.

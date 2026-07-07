@@ -1,5 +1,7 @@
 # GreyHack Weekly Insights — KW 27 (2026-06-28 → 2026-07-04)
 
+> **📌 Historischer Stand (2026-07-04).** Die MaxClaw-Runtime wurde am 2026-07-07 auf **OpenClaw** migriert (Config: `config/openclaw.json` + `exec-approvals.json`, siehe README). Referenzen unten auf `hermes …`, `~/.hermes/` oder `config.yaml` beschreiben den damaligen Stand und werden bewusst nicht rückwirkend umgeschrieben.
+
 > **Distiller:** MaxClaw (heavy model, Hermes `default`-Profil)
 > **Zeitfenster:** 7 Tage, Eingrenzung 2026-06-28 (00:00) → 2026-07-04 (23:59 Lokal)
 > **Input-Quellen:** 6 system-doku Files, Skill-Refs, MaxClaw v3-Upgrade-Briefing, GreyHackDB.db-Snapshot

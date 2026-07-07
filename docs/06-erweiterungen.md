@@ -46,7 +46,7 @@ Bildschirm, sondern ist in deiner ganzen Umgebung präsent. (Noch experimentell.
 
 ## Unsere Erweiterungen (Basti)
 - **System-Documentation-Skill** — pflegt `~/docs/system/` als Markdown-Baum.
-- **GreyHack-Skills** (in `~/.hermes/skills/gaming/`) — `greyhack` (Pipeline), `greyhack-greyscript` (Sprachref), `greyhack-sandbox` (greybel-js), `greyhack-hermes-api` (HTTP-Bridge).
+- **GreyHack-Skills** (in `~/.openclaw/skills/gaming/`) — `greyhack` (Pipeline), `greyhack-greyscript` (Sprachref), `greyhack-sandbox` (greybel-js), `greyhack-hermes-api` (HTTP-Bridge).
 - **daily-briefing / session-handoff / telegram-clarification-prompt** — Betriebs-Skills.
 - Beispiel-Skill in diesem Repo: [`../skills/project-doc-sync/`](../skills/project-doc-sync/).
 
@@ -68,7 +68,7 @@ jeder mit lauffähigem Bash/Python-Code und YAML-Frontmatter. Decision-Tree in [
 | `project-doc-sync` | docs, sync, system-documentation | Hält `~/docs/system/` synchron mit dem Workspace |
 
 Installation: siehe [`../skills/INSTALL.md`](../skills/INSTALL.md). Skill-Trigger sind so
-gecutten, dass `skill_view(name='<skill>')` per Hermes-Skill-Loader direkt gegriffen wird.
+gecutten, dass `skill_view(name='<skill>')` per OpenClaw-Skill-Loader direkt gegriffen wird.
 
 > 💡 Eigenen Skill erstellen? Einfach sagen: „Erstelle einen Skill, der X macht."
 

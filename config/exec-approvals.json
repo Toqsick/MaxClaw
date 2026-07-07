@@ -1,0 +1,91 @@
+// =============================================================================
+// MaxClaw — exec-approvals.json  (JSON5)
+// Ablageort:  ~/.openclaw/exec-approvals.json
+// -----------------------------------------------------------------------------
+// OpenClaw-native Command-Allowlist/Denylist. Greift zusammen mit
+// openclaw.json → tools.exec { mode: "allowlist", ask: "on-miss", askFallback: "deny" }.
+// Ersetzt die alte YAML-config.yaml → permissions.tools.terminal.allow/deny.
+//
+// Prinzip: DEFAULT-DENY. Nur explizit gelistete Kommandos laufen ohne Rückfrage;
+// alles andere → ask (on-miss) → bei Nicht-Bestätigung: deny.
+// deny gewinnt IMMER gegen allow (Defense-in-Depth).
+// =============================================================================
+{
+  version: 1,
+  mode: "allowlist",
+
+  allow: [
+    // --- Git: lesen + stagen (kein push) ---
+    "git status",
+    "git diff*",
+    "git log*",
+    "git add*",
+    "git commit*",
+
+    // --- Read-only Filesystem ---
+    "ls*",
+    "cat*",
+    "grep*",
+    "find*",
+    "head*",
+    "tail*",
+    "wc*",
+
+    // --- GreyHack-Build-Pipeline (OHNE -u! Inline-if-Bug) ---
+    "greybel build",
+    "greybel build*",
+
+    // --- GreyHack-Sandbox (read-only by design) ---
+    "python3 ~/projects/greyhack-sandbox/src/greyhack-sandbox.py*",
+    "python3 ~/projects/greyhack-sandbox/src/npc_intel.py*",
+    "python3 ~/projects/greyhack-sandbox/src/auto_pwn.py*",
+    "python3 -m http.server 8765",
+
+    // --- Ops-Skripte ---
+    "~/bin/maxclaw-security-audit.sh",
+    "~/bin/maxclaw-config-check.sh",
+  ],
+
+  deny: [
+    // --- Killer-Patterns (P0) ---
+    "rm -rf*",
+    "rm -fr*",
+    "git push* main*",            // main-Push nur nach Freigabe (Bastis Regel)
+    "git push* origin main*",
+    "sudo*",
+    "su -",
+    "su root",
+
+    // --- Blind-Pipe-to-Shell ---
+    "curl* | *sh",
+    "curl* | bash",
+    "wget* | *sh",
+    "wget* | bash",
+
+    // --- GreyHack-spezifisch: -u-Flag ist broken (Inline-if-Bug) ---
+    "greybel build -u*",
+    "greybel build*-u*",
+
+    // --- Keine echten SSH-Logins (nur Sandbox via net_use) ---
+    "ssh root@*",
+    "ssh *@* prod*",
+
+    // --- Datenträger / destruktiv ---
+    "dd of=/dev/*",
+    "mkfs.*",
+    "git push* -f*",
+    "git push* --force*",
+    "git reset --hard*",
+    "git clean -fd*",
+
+    // --- Permission-Eskalation ---
+    "chmod -R 777*",
+    "chmod 777*",
+    "chown -R*",
+
+    // --- System-Service-Manipulation ---
+    "systemctl disable*",
+    "systemctl stop*",
+    "systemctl mask*",
+  ],
+}

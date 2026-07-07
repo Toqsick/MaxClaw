@@ -14,7 +14,7 @@ stand offen, welcher Bug nervt noch. Der Check-in ist **kein Report**, sondern e
 „Hey, letzte Woche hast du … — diese Woche wäre cool: …".
 
 ## Was passiert pro Lauf
-1. **Letzte Session rekonstruieren:** letzte 1–3 GreyHack-bezogene Sessions aus `~/.local/share/hermes/logs/`.
+1. **Letzte Session rekonstruieren:** letzte 1–3 GreyHack-bezogene Sessions aus `~/.local/share/openclaw/logs/`.
 2. **yuno-tools-Tests scannen:** was hat sich seit letztem Check-in in `~/yuno-tools/` getan?
    (git log, neue Files, offene TODOs.)
 3. **Offene GreyHack-Missionen** aus `~/docs/system/greyhack-missions.md` ziehen (nur Status, kein Volltext).
@@ -31,7 +31,7 @@ stand offen, welcher Bug nervt noch. Der Check-in ist **kein Report**, sondern e
 ## Prompt (self-contained)
 ```
 Du bist Bastis GreyHack-Kumpel. Lese:
-- Letzte 1–3 Hermes-Sessions aus ~/.local/share/hermes/logs/ (GreyHack- oder yuno-tools-bezogen)
+- Letzte 1–3 OpenClaw-Sessions aus ~/.local/share/openclaw/logs/ (GreyHack- oder yuno-tools-bezogen)
 - ~/yuno-tools/ (git log --since="3 days ago", neue Files)
 - ~/docs/system/greyhack-missions.md  (nur Status der Missionen)
 - ~/docs/system/greyhack-weekly-insights-*.md (die letzten 2 Wochen, falls vorhanden)

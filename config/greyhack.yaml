@@ -1,0 +1,75 @@
+# =============================================================================
+# MaxClaw — greyhack.yaml  —  GreyHack-DOMÄNEN-DATEN
+# Ablageort:  ~/.openclaw/greyhack.yaml  (oder ~/greyhack-tools/greyhack.yaml)
+# -----------------------------------------------------------------------------
+# WICHTIG: Das ist KEINE OpenClaw-Runtime-Config. OpenClaw parst diese Datei NICHT
+# (`openclaw doctor --fix` würde unbekannte Keys aus openclaw.json strippen — deshalb
+# liegen GreyHack-Daten bewusst hier getrennt). Gelesen von Agent-Policy (AGENTS.md)
+# und den GreyHack-Skills.
+#
+# Herkunft: der `greyhack:`-Block der alten config.yaml (v3.0), unverändert im Inhalt,
+# nur aus der Runtime-Config herausgelöst.
+#
+# Die zugehörigen SICHERHEITS-Gates (greyhack_strike / money_transfer / account_delete)
+# haben kein OpenClaw-Runtime-Äquivalent und leben als Policy in agent/AGENTS.md
+# ("Bestätigungspflicht"). Die Command-Ebene (greybel ohne -u etc.) steht in
+# exec-approvals.json.
+# =============================================================================
+greyhack:
+  enabled: true                   # GreyHack-Track ist aktiv
+  # --- Spieler-Kontext ---
+  player: "Bratan"
+  game_version: "V0.9.6771-beta"
+  install_path: "/mnt/DATA/Programme/Steam/steamapps/common/Grey Hack"
+  tools_dir: "~/greyhack-tools/"  # lokales Repo
+  in_game_tools_dir: "/mnt/DATA/Programme/Steam/steamapps/common/Grey Hack/yuno-tools/"
+
+  # --- Active Missions (gespiegelt nach MEMORY.md) ---
+  active_missions:
+    - id: "reraldi_main"
+      target_ip: "154.19.190.206"
+      contact: "Reraldi@adahidomev.net"
+      status: "recon"             # recon | strike | done | failed
+      next_step: "NPC-Intel-Subagent starten"
+
+  # --- Build-Pipeline ---
+  build:
+    binary: "greybel"             # Pfad-Auflösung via $PATH
+    use_flag: false               # IMMER ohne -u (Inline-if-Bug)
+    output_dir: "~/greyhack-tools/build/"
+    required_header: "//command:" # erste Zeile Pflicht
+    sandbox_test_dir: "/tmp/MaxClaw/greyhack-sandbox/"
+
+  # --- Sandbox-Konfiguration ---
+  sandbox:
+    clone_from: "~/greyhack-tools/"   # sandbox_clone erlaubt von hier
+    clone_to:   "/tmp/MaxClaw/greyhack-sandbox/"
+    cleanup_after_hours: 24           # Auto-Cleanup alter Sandbox-Klone
+    network_isolation: true           # Sandbox darf NICHT echtes Netz erreichen
+
+  # --- Modell-Routing für GreyHack-Tasks (heavy gezielt erlaubt) ---
+  heavy_tasks:
+    - "greybel build validation"      # neuer Build → heavy-Modell prüft Syntax
+    - "grey_script generation"        # neue Scripts → heavy
+    - "exploit_chain reasoning"       # komplexe Multi-Hop-Planung
+    - "npc_intel deep scan"           # Subagent-Recon (kann auch subagent-Modell)
+
+  # --- Erlaubte GreyHack-Workflows (Whitelist) ---
+  allowed_workflows:
+    - "portscan"                      # nmap/net_use Loop
+    - "bruteforce"                    # SSH-Login-Loop mit Wortliste
+    - "deep_recon"                    # /etc/passwd + /home + Config-Loot
+    - "hardening_audit"               # READ-ONLY (default)
+    - "hardening_apply"               # nur nach expliziter Freigabe
+    - "dee_strike"                    # vordefinierte NPC-Strikes
+    - "multihop_strike"               # Dee → LAN → Royal
+    - "bank_grab"                     # money_transfer erfordert Bestätigung
+    - "trace_clean"                   # Log-Bereinigung (Sandbox)
+
+  # --- Verboten auch wenn oben erlaubt (Defense-in-Depth) ---
+  forbidden_targets:
+    - "127.0.0.1"                     # nicht localhost
+    - "0.0.0.0"
+    - "10.0.0.0/8"                    # nur Bastis dokumentierte 10.0.22/12/23-Sandbox-Subnets
+    - "192.168.0.0/16"
+    - "172.16.0.0/12"

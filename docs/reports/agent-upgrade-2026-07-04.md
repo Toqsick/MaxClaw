@@ -1,5 +1,7 @@
 # MaxClaw Agent-Upgrade 2026-07-04 — v2 → v3.0
 
+> **📌 Historischer Stand (2026-07-04).** Die MaxClaw-Runtime wurde am 2026-07-07 auf **OpenClaw** migriert (Config: `config/openclaw.json` + `exec-approvals.json`, siehe README). Referenzen unten auf `hermes …`, `~/.hermes/` oder `config.yaml` beschreiben den damaligen Stand und werden bewusst nicht rückwirkend umgeschrieben.
+
 > Refaktorierung der MaxClaw-Agent-Files und Config zur Integration der **28 yuno-tools
 > GreyScripts als Best-Practice-Quelle**. Autor: MaxClaw (im Auftrag von Basti).
 > Geprüft mit: `~/bin/maxclaw-config-check.sh` → **0 Errors, 0 Warnings (14/14 Checks ✓)**.

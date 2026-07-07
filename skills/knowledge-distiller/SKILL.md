@@ -2,7 +2,7 @@
 name: knowledge-distiller
 description: Liest MaxClaw-Session-Logs, Workflow-Outputs und ~/docs/system/, destilliert wiederkehrende Muster und schlägt gezielte Skill-Updates vor. Trigger weekly (Sonntag-Cron) oder nach größeren Themen-Phasen.
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
@@ -12,7 +12,7 @@ triggers:
   - milestone: nach Phase-Abschluss (n Builds erledigt)
   - manual: "distill.sh"
 metadata:
-  hermes:
+  openclaw:
     tags:
       - meta
       - knowledge
@@ -52,7 +52,7 @@ docs  = list(Path("$DOC_DIR").rglob("*.md"))
 logs  = list(Path("$LOG_DIR").rglob("*.log"))
 
 # 1) Häufigste Befehle aus Logs (Pattern, nicht Strings)
-cmd_re = re.compile(r"\b(greybel build|sqlite3|rsync|hermes cron|gh pr)\b\S*")
+cmd_re = re.compile(r"\b(greybel build|sqlite3|rsync|openclaw cron|gh pr)\b\S*")
 cnt = collections.Counter()
 for log in logs[-50:]:                     # letzte 50 Logs
     for m in cmd_re.finditer(log.read_text(errors="ignore")):
@@ -123,7 +123,7 @@ for err, n in errors.most_common(5):
 
 ```cron
 # So 23:00 — Wochenrückblick
-0 23 * * 0 /home/bratan/.hermes/skills/knowledge-distiller/scripts/distill.sh \
+0 23 * * 0 /home/bratan/.openclaw/skills/knowledge-distiller/scripts/distill.sh \
     && SILENT_OK=1 notify.sh ok "knowledge-distill: fertig" \
     || notify.sh alert "knowledge-distill: fehlgeschlagen"
 ```

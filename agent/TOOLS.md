@@ -132,7 +132,7 @@ werden folgende Code-Idiome immer wieder kopiert — bei neuen Scripts übernehm
    end if
    ```
 
-## Modell-Routing (siehe config/config.yaml)
+## Modell-Routing (siehe config/openclaw.json)
 
 - Heartbeat/Routine → billiges Modell.
 - Alltag → günstig-aber-gut.

@@ -79,7 +79,7 @@ maxclaw.deine-domain.de {
 - [ ] Gateway-Token gesetzt & sicher gespeichert (SecretRef, nicht im Klartext).
 - [ ] CPU/RAM-Limits am Container gesetzt.
 - [ ] Firewall (ufw): nur 22 (SSH) + 443 (HTTPS) offen, 18789 **zu**.
-- [ ] `config.yaml` mit Default-Deny (siehe [07-security.md](07-security.md)).
+- [ ] `openclaw.json` + `exec-approvals.json` mit Default-Deny (siehe [07-security.md](07-security.md)).
 - [ ] Wöchentlicher Security-Audit-Cron aktiv.
 
 ```bash

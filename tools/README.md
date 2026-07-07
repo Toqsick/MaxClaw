@@ -9,7 +9,7 @@ Code-Kommentaren und **ausführlichem `--help`**.
 | `greyhack-db-snapshot.sh` | Bash | Erstellt + rotiert SQLite-Sandbox-Snapshots der GreyHack-DB. Watchdog-Pattern: silent on success. | `--dry-run`, `--force`, `--help` |
 | `greyhack-db-analyze.py` | Python | Liest DB-Snapshot (immutable+ro), extrahiert Player-State, Mission-Status, Inventar als JSON. | `--summary`, `--json`, `--pretty`, `--player-only`, `-o FILE` |
 | `maxclaw-security-audit.sh` | Bash | Self-Audit (6 Phasen, JSON-Output): write_paths, sudo, secret-Refs, git-push-main, Modell-Limits, world_writable | `--phase=N`, `--output=FILE`, `--help` |
-| `maxclaw-config-check.sh` | Bash | Validiert `config.yaml`: 14 Checks in 9 Kategorien (yq/python-yaml/grep-Fallback). | `--verbose`, `--help` |
+| `maxclaw-config-check.sh` | Bash | Validiert `openclaw.json` + `exec-approvals.json` + `greyhack.yaml` (Invarianten; ruft `openclaw config validate`, falls vorhanden). | `[pfad/openclaw.json]` |
 
 ## Installation
 

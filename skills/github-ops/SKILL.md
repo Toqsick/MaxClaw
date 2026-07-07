@@ -2,7 +2,7 @@
 name: github-ops
 description: "gh-CLI-Patterns für MaxClaw: PR-Erstellung mit Templating, Issue-Triage mit Label-Dispatch, Conflict-Resolution via rebase/merge. Trigger bei Code-Reviews, Repo-Push, PR-Monitoring (cron) und Issue-Management."
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
@@ -13,7 +13,7 @@ triggers:
   - workflow: nach erfolgreichem greybel-Build → auto-PR
   - manual: bei Issue-Triage oder PR-Merge
 metadata:
-  hermes:
+  openclaw:
     tags:
       - collaboration
       - github
@@ -147,5 +147,5 @@ printf "$OUT" | tee ~/.cache/maxclaw/pr-monitor.txt
 
 ```cron
 # 09:00 + 17:00 — PR-Monitor
-0 9,17 * * * /home/bratan/.hermes/skills/github-ops/scripts/gh-pr-monitor.sh
+0 9,17 * * * /home/bratan/.openclaw/skills/github-ops/scripts/gh-pr-monitor.sh
 ```

@@ -1,5 +1,7 @@
 # Security-Remediation-Liste — 2026-07-04
 
+> **📌 Historischer Stand (2026-07-04).** Die MaxClaw-Runtime wurde am 2026-07-07 auf **OpenClaw** migriert (Config: `config/openclaw.json` + `exec-approvals.json`, siehe README). Referenzen unten auf `hermes …`, `~/.hermes/` oder `config.yaml` beschreiben den damaligen Stand und werden bewusst nicht rückwirkend umgeschrieben.
+
 > **Grundlage:** MaxClaw Self-Audit (`/tmp/maxclaw-clone/security-audit-2026-07-04.md`)
 > **Stand:** 2026-07-04 05:30 MESZ
 > **Hermes-Schutz:** `~/.hermes/config.yaml` ist Agent-write-protected — diese Edits müssen via Basti selbst laufen (`hermes config edit` oder direkter Edit mit Root-Account).

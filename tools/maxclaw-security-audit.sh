@@ -17,7 +17,7 @@
 # Output: JSON-Report → ~/logs/maxclaw-security-audit-LAST.json
 # Alte Reports: ~/logs/maxclaw-security-audit-YYYYMMDD-HHMM.json (rolling 30)
 #
-# Bei P0: Telegram-Alert an Basti (falls Hermes-Gateway erreichbar).
+# Bei P0: Telegram-Alert an Basti (falls OpenClaw-Gateway erreichbar).
 # Bei P1: nur im Log + Daily-Digest-Hook (nicht inline).
 # Bei P2: nur im Log.
 #
@@ -40,7 +40,7 @@ readonly REPORT_LAST="${LOG_DIR}/${SCRIPT_NAME}-LAST.json"
 readonly REPORT_HIST="${LOG_DIR}/${SCRIPT_NAME}-${DATE_STAMP}.json"
 readonly MAXCLAW_REPO="${MAXCLAW_REPO:-/tmp/maxclaw-clone}"
 readonly AUDIT_CONFIG="${MAXCLAW_REPO}/security/hardening_audit_maxclaw.yaml"
-readonly HERMES_AUTH="${HOME_DIR}/.hermes/auth.json"
+readonly OPENCLAW_CFG="${HOME_DIR}/.openclaw/openclaw.json"   # OpenClaw-Runtime-Config
 readonly TG_CHAT="7222661188"
 
 # Farben (falls interaktiv)
@@ -128,7 +128,7 @@ check_phase0_backup() {
 
     # Backup-Aktualität
     local latest_backup
-    latest_backup=$(find "${HOME_DIR}/.hermes" -name 'config.yaml.bak.*' -printf '%T@\n' 2>/dev/null | sort -n | tail -1)
+    latest_backup=$(find "${HOME_DIR}/.openclaw" -name 'openclaw.json.bak.*' -printf '%T@\n' 2>/dev/null | sort -n | tail -1)
     if [[ -n "$latest_backup" ]]; then
         local now latest_days_old
         now=$(date +%s)
@@ -141,11 +141,11 @@ check_phase0_backup() {
             add_finding "P0.backup.recent" "P1" \
                 "Letzte Config-Sicherung ${latest_days_old} Tage alt" \
                 "Älter als 14 Tage." \
-                "Snapshot der config.yaml anlegen."
+                "Snapshot der openclaw.json anlegen."
         fi
     else
         add_finding "P0.backup.recent" "P2" \
-            "Keine config.yaml.bak gefunden" \
+            "Keine openclaw.json.bak gefunden" \
             "Backup-Strategie fehlt möglicherweise." \
             "Pre-Commit-Hook für Snapshots einrichten."
     fi
@@ -211,7 +211,7 @@ check_phase2_ports() {
         add_finding "P2.port.gateway" "P0" \
             "Gateway-Port 18789 auf 0.0.0.0 gebunden!" \
             "Weltweit erreichbar. KRITISCH." \
-            "Sofort .openclaw/.hermes stoppen, dann gateway.bind = 127.0.0.1."
+            "Sofort OpenClaw-Gateway stoppen, dann gateway.bind = 127.0.0.1."
     elif echo "$gw_line" | grep -q '127\.0\.0\.1:18789'; then
         add_finding "P2.port.gateway" "OK" \
             "Gateway-Port 18789 nur auf loopback" \
@@ -285,92 +285,97 @@ check_phase3_egress() {
 check_phase4_perms() {
     log "PHASE 4 — Permission-Check"
 
-    # write_paths in config.yaml vorhanden?
-    local config_files=(
-        "${HOME_DIR}/.hermes/config.yaml"
-        "${MAXCLAW_REPO}/config/config.yaml"
-    )
+    # OpenClaw-Runtime-Config finden (Host bevorzugt, sonst Repo-Vorlage)
     local found_config=""
-    for cf in "${config_files[@]}"; do
-        if [[ -f "$cf" ]]; then
-            found_config="$cf"
-            break
-        fi
+    for cf in "${OPENCLAW_CFG}" "${MAXCLAW_REPO}/config/openclaw.json"; do
+        if [[ -f "$cf" ]]; then found_config="$cf"; break; fi
+    done
+
+    # Exec-Policy finden (Command-Allowlist/Denylist)
+    local exec_policy=""
+    for ef in "${HOME_DIR}/.openclaw/exec-approvals.json" "${MAXCLAW_REPO}/config/exec-approvals.json"; do
+        if [[ -f "$ef" ]]; then exec_policy="$ef"; break; fi
     done
 
     if [[ -n "$found_config" ]]; then
-        if grep -q 'write_paths:' "$found_config" 2>/dev/null; then
-            local wp_count
-            wp_count=$(grep -A 10 'write_paths:' "$found_config" | grep -cE '^\s*-')
-            if (( wp_count > 0 && wp_count <= 8 )); then
-                add_finding "P4.write_paths.declared" "OK" \
-                    "write_paths deklariert (${wp_count} Einträge)" \
-                    "Konfig: $found_config"
-            elif (( wp_count > 8 )); then
-                add_finding "P4.write_paths.declared" "P2" \
-                    "write_paths sehr breit (${wp_count} Einträge)" \
-                    "Mehr als 8 Einträge → Wildwuchs wahrscheinlich." \
-                    "Ungenutzte Pfade entfernen."
-            else
-                add_finding "P4.write_paths.declared" "P1" \
-                    "write_paths leer" \
-                    "Agent kann nirgends schreiben → manche Workflows scheitern." \
-                    "Mindestens ~/docs/ und ~/greyhack-tools/ aufnehmen."
-            fi
+        # Default-Deny via Exec-Allowlist-Modus?
+        if grep -qE 'mode:\s*"?allowlist"?' "$found_config" 2>/dev/null; then
+            add_finding "P4.exec.allowlist" "OK" \
+                "tools.exec.mode = allowlist (Default-Deny)" \
+                "Konfig: $found_config"
         else
-            add_finding "P4.write_paths.declared" "P1" \
-                "write_paths fehlt in config" \
-                "Default-Deny für Files nicht spezifiziert." \
-                "write_paths-Block in config.yaml aufnehmen."
+            add_finding "P4.exec.allowlist" "P1" \
+                "tools.exec.mode nicht 'allowlist'" \
+                "Default-Deny für Kommandos nicht spezifiziert." \
+                "tools.exec.mode: allowlist + askFallback: deny setzen."
         fi
 
-        # git push main verboten?
-        if grep -qE 'git push.*main' "$found_config" 2>/dev/null; then
+        # browser deaktiviert (Prompt-Injection)?
+        if grep -qE '"?browser"?' "$found_config" 2>/dev/null && grep -qE 'deny:\s*\[[^]]*browser' "$found_config" 2>/dev/null; then
+            add_finding "P4.browser.deny" "OK" \
+                "browser in tools.deny" \
+                "Prompt-Injection-Vektor geschlossen."
+        else
+            add_finding "P4.browser.deny" "P1" \
+                "browser nicht sicher in tools.deny" \
+                "Prompt-Injection-Risiko." \
+                "tools.deny um 'browser' erweitern."
+        fi
+
+        # config-Welt-Lesbarkeit? (nur für Host-Config sinnvoll)
+        if [[ "$found_config" == "${OPENCLAW_CFG}" ]]; then
+            local perm
+            perm=$(stat -c '%a' "$found_config" 2>/dev/null)
+            if [[ "$perm" == "600" || "$perm" == "400" ]]; then
+                add_finding "P4.config.perm" "OK" \
+                    "openclaw.json restriktiv (${perm})" \
+                    "Nur Eigentümer."
+            else
+                add_finding "P4.config.perm" "P1" \
+                    "openclaw.json zu lesbar (${perm})" \
+                    "Andere User können Config einsehen." \
+                    "chmod 600 $found_config"
+            fi
+        fi
+    else
+        add_finding "P4.config.found" "P1" \
+            "Keine aktive openclaw.json gefunden" \
+            "Weder ~/.openclaw/openclaw.json noch Repo-Vorlage." \
+            "Pfad prüfen oder MAXCLAW_REPO setzen."
+    fi
+
+    # git-push-main + sudo in Exec-Denylist?
+    if [[ -n "$exec_policy" ]]; then
+        if grep -qE 'git push.*main' "$exec_policy" 2>/dev/null; then
             add_finding "P4.git.main_push_denied" "OK" \
-                "git push auf main in Denylist" \
+                "git push auf main in exec-approvals.json deny" \
                 "Default-Deny-Regel aktiv."
         else
             add_finding "P4.git.main_push_denied" "P1" \
-                "git push auf main nicht in Denylist" \
+                "git push auf main nicht in deny" \
                 "Risiko: versehentlicher main-Push nicht abgefangen." \
-                "permissions.terminal.deny um 'git push* main*' erweitern."
+                "exec-approvals.json deny um 'git push* main*' erweitern."
         fi
-
-        # sudo in Denylist?
-        if grep -qE 'sudo\*' "$found_config" 2>/dev/null; then
+        if grep -qE '"sudo\*"' "$exec_policy" 2>/dev/null; then
             add_finding "P4.sudo.deny" "OK" \
-                "sudo in Denylist" \
+                "sudo in exec-approvals.json deny" \
                 "Rechte-Eskalation unterbunden."
         else
             add_finding "P4.sudo.deny" "P1" \
                 "sudo nicht explizit verboten" \
                 "Bash-Wildcard erlaubt versehentlich sudo-Aufrufe." \
-                "deny: ['sudo*'] ergänzen."
-        fi
-
-        # config-Welt-Lesbarkeit?
-        local perm
-        perm=$(stat -c '%a' "$found_config" 2>/dev/null)
-        if [[ "$perm" == "600" || "$perm" == "400" ]]; then
-            add_finding "P4.config.perm" "OK" \
-                "config.yaml restriktiv (${perm})" \
-                "Nur Eigentümer."
-        else
-            add_finding "P4.config.perm" "P1" \
-                "config.yaml zu lesbar (${perm})" \
-                "Andere User können Config einsehen." \
-                "chmod 600 $found_config"
+                "exec-approvals.json deny um 'sudo*' erweitern."
         fi
     else
-        add_finding "P4.config.found" "P1" \
-            "Keine aktive config.yaml gefunden" \
-            "Weder ~/.hermes/config.yaml noch Repo-Vorlage." \
-            "Pfad prüfen oder MAXCLAW_REPO setzen."
+        add_finding "P4.exec.found" "P1" \
+            "Keine exec-approvals.json gefunden" \
+            "Command-Policy nicht prüfbar." \
+            "config/exec-approvals.json nach ~/.openclaw/ deployen."
     fi
 
     # World-writable in Workspaces
     local ww
-    ww=$(find "${HOME_DIR}/greyhack-tools" "${HOME_DIR}/.openclaw" "${HOME_DIR}/.hermes" \
+    ww=$(find "${HOME_DIR}/greyhack-tools" "${HOME_DIR}/.openclaw" \
             -type f -perm -o+w 2>/dev/null | head -5)
     if [[ -z "$ww" ]]; then
         add_finding "P4.fs.world_writable" "OK" \
@@ -469,9 +474,9 @@ check_phase5_traces() {
         fi
     fi
 
-    # Laufen Hermes/MaxClaw-Prozesse?
+    # Laufen OpenClaw/MaxClaw-Prozesse?
     local procs
-    procs=$(ps -eo pid,etime,user,comm 2>/dev/null | grep -E 'hermes|openclaw' | grep -v grep | head -5)
+    procs=$(ps -eo pid,etime,user,comm 2>/dev/null | grep -E 'openclaw' | grep -v grep | head -5)
     if [[ -n "$procs" ]]; then
         add_finding "P5.proc.running" "OK" \
             "Bekannte Agent-Prozesse aktiv" \
@@ -485,44 +490,38 @@ check_phase5_traces() {
 check_model_limits() {
     log "MODELLE — Limits & Routing"
 
-    local config="${HOME_DIR}/.hermes/config.yaml"
-    [[ ! -f "$config" ]] && config="${MAXCLAW_REPO}/config/config.yaml"
+    local config="${OPENCLAW_CFG}"
+    [[ ! -f "$config" ]] && config="${MAXCLAW_REPO}/config/openclaw.json"
     [[ ! -f "$config" ]] && {
         add_finding "M.config.missing" "P2" \
-            "Keine config.yaml für Modell-Check gefunden" \
-            "Modell-Limits nicht prüfbar." \
+            "Keine openclaw.json für Modell-Check gefunden" \
+            "Modell-Routing nicht prüfbar." \
             "Pfad setzen."
         return
     }
 
-    # Heartbeat-Modell
-    if grep -qE 'heartbeat:' "$config" 2>/dev/null; then
-        local hb_model
-        hb_model=$(grep -A 3 'heartbeat:' "$config" | grep 'model:' | head -1 | awk '{print $2}')
-        if [[ -n "$hb_model" ]]; then
-            if [[ "$hb_model" == *"flash"* || "$hb_model" == *"mini"* || "$hb_model" == *"nano"* || "$hb_model" == *"haiku"* ]]; then
-                add_finding "M.heartbeat.cheap" "OK" \
-                    "Heartbeat-Modell ist billig (${hb_model})" \
-                    "Watchdog-Pattern erfüllt."
-            else
-                add_finding "M.heartbeat.cheap" "P1" \
-                    "Heartbeat-Modell teuer (${hb_model})" \
-                    "Alle 30 min ein teurer Call → Kostenfalle." \
-                    "Heartbeat auf flash/mini/nano umstellen."
-            fi
-        fi
+    # Subagenten/Heartbeat billig? (Schwarm = flash/mini/nano/haiku)
+    if grep -qE '(flash|mini|nano|haiku)' "$config" 2>/dev/null; then
+        add_finding "M.swarm.cheap" "OK" \
+            "Günstiges Schwarm-/Heartbeat-Modell im Routing (flash/mini/…)" \
+            "Watchdog-/Subagent-Kosten niedrig."
+    else
+        add_finding "M.swarm.cheap" "P1" \
+            "Kein günstiges Modell im Routing gefunden" \
+            "Heartbeat/Subagenten evtl. auf teurem Modell → Kostenfalle." \
+            "recon/subagents auf gemini-2.5-flash o.ä. setzen."
     fi
 
-    # monthly_limit_eur
-    if grep -q 'monthly_limit_eur:' "$config" 2>/dev/null; then
-        add_finding "M.budget.declared" "OK" \
-            "monthly_limit_eur deklariert" \
-            "Kostenbremse aktiv."
+    # Kostenbremse: cacheRetention/contextPruning deklariert?
+    if grep -qE 'cacheRetention|contextPruning' "$config" 2>/dev/null; then
+        add_finding "M.cost.controls" "OK" \
+            "cacheRetention/contextPruning deklariert" \
+            "Prompt-Caching-Kostenkontrolle aktiv."
     else
-        add_finding "M.budget.declared" "P1" \
-            "monthly_limit_eur fehlt" \
-            "Kein hartes Budget." \
-            "limits pro Modell in config.yaml ergänzen."
+        add_finding "M.cost.controls" "P1" \
+            "Keine Caching-/Pruning-Kostenkontrolle" \
+            "Cache-Writes/Kontext laufen ungebremst." \
+            "params.cacheRetention + contextPruning in agents.defaults setzen."
     fi
 }
 
@@ -541,9 +540,9 @@ maybe_send_telegram() {
     fi
 
     # Bewusst NICHT automatisch senden — der Audit-Skript ist read-only by policy.
-    # Stattdessen: Hook für Hermes/Telegram-Notifier hinterlassen.
+    # Stattdessen: Hook für OpenClaw/Telegram-Notifier hinterlassen.
     warn "P0-Befunde: ${p0_count} — siehe ${REPORT_LAST}"
-    warn "(Auto-Telegram würde Policy verletzen; Hook in Hermes manuell triggern.)"
+    warn "(Auto-Telegram würde Policy verletzen; Hook in OpenClaw manuell triggern.)"
 }
 
 # -----------------------------------------------------------------------------

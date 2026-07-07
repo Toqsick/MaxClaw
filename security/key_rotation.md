@@ -15,9 +15,9 @@
 | S3 | `TELEGRAM_CHAT_ID` (`7222661188`) | SecretRef (low-sensitivity) | Zieladresse | Basti |
 | S4 | `GH_TOKEN` (für `gh` CLI, Toqsick-Scopes) | `~/.config/gh/hosts.yml` | GitHub-Workflows | Basti |
 | S5 | `MAXCLAW_GATEWAY_TOKEN` | `~/.openclaw/out/gateway.token` | Loopback-Gateway-Auth | Basti |
-| S6 | `HERMES_AUTH` (config auth.json) | `~/.hermes/auth.json` | Hermes-Provider | Basti |
+| S6 | `OPENCLAW_AUTH` (auth.profiles) | `openclaw secrets`-Store | OpenClaw-Provider-Auth | Basti |
 | S7 | `YUNO_CLEANER_TELEGRAM_TOKEN` | crontab-Env (siehe Hinweis) | Yuno-Cleaner-Auto-Scan | Basti |
-| S8 | `HERMES_GH_API_TOKEN` | crontab-Env | hermes-gh-api-server | Basti |
+| S8 | `OPENCLAW_GH_API_TOKEN` | crontab-Env | openclaw-gh-api-server | Basti |
 
 ---
 
@@ -29,7 +29,7 @@
 | S2 Telegram-Bot | **alle 180 Tage** + **sofort** bei Verdacht. | Bot hat Write auf Bastis DM. |
 | S4 gh-Token | **alle 90 Tage** (gerne PAT-Äquivalent) | Repo-Schreibrechte, force-push möglich. |
 | S5 Gateway-Token | **alle 180 Tage** | Nur loopback, geringeres Risiko. |
-| S6 Hermes-auth | **alle 180 Tage** oder bei Profil-Wechsel. | Provider-übergreifend. |
+| S6 OpenClaw-auth | **alle 180 Tage** oder bei Profil-Wechsel. | Provider-übergreifend. |
 | S7, S8 (crontab) | **alle 365 Tage** | Eingeschränkte Rechte, längere Zyklen ok. |
 
 **Notfall-Rotation: SOFORT** wenn
@@ -47,10 +47,10 @@
 
 ```bash
 # 1) Im OpenRouter-Dashboard neuen Key generieren.
-# 2) Lokal ersetzen — niemals in config.yaml eintragen!
-hermes config set OPENROUTER_API_KEY <NEUER_KEY>
+# 2) Lokal ersetzen — niemals in openclaw.json eintragen!
+openclaw secrets set OPENROUTER_API_KEY <NEUER_KEY>
 # 3) Test: ein billiger Modell-Call
-hermes --model heartbeat "Ping?"
+openclaw --model heartbeat "Ping?"
 # 4) Alten Key im Dashboard widerrufen.
 # 5) In MEMORY.md das Rotations-Datum notieren.
 ```
@@ -60,7 +60,7 @@ hermes --model heartbeat "Ping?"
 ```bash
 # 1) In BotFather: /revoke → neuen Token holen.
 # 2) Lokal ersetzen
-hermes config set TELEGRAM_BOT_TOKEN <NEUER_TOKEN>
+openclaw secrets set TELEGRAM_BOT_TOKEN <NEUER_TOKEN>
 # 3) Test-Ping an Basti selbst.
 # 4) Alten Token ist ungültig (BotFather hat ihn verworfen).
 ```
@@ -77,9 +77,9 @@ hermes config set TELEGRAM_BOT_TOKEN <NEUER_TOKEN>
 ### 3.4 Gateway-Token (S5)
 
 ```bash
-# 1) openssl rand -hex 32
-hermes config set MAXCLAW_GATEWAY_TOKEN <NEUER>
-# 2) config.yaml require_token: true bleibt.
+# 1) OpenClaw-nativ rotieren (erzeugt + setzt neuen Token):
+openclaw token:rotate --force --length 64
+# 2) Gateway-Auth bleibt Pflicht (gateway.bind = 127.0.0.1).
 # 3) Service-Restart: systemctl --user restart openclaw
 # 4) Clients (Telegram, Browser-Plugin) mit neuem Token versorgen.
 ```
@@ -90,7 +90,7 @@ hermes config set MAXCLAW_GATEWAY_TOKEN <NEUER>
 
 | Ort | Warum verboten |
 |-----|----------------|
-| `config/config.yaml`, `config/*.yaml` | Wird committed, taucht in `git log` auf. |
+| `config/openclaw.json`, `config/exec-approvals.json` | Wird committed, taucht in `git log` auf. |
 | `agent/MEMORY.md`, `agent/MEMORY.local.md` | Persistenter Kontext, exportierbar. |
 | `agent/daily/*.md` | Daily-Notes werden langfristig aufbewahrt. |
 | Telegram-Chat (auch Privat-DM) | Kein Token in Klartext chatten. |
@@ -113,7 +113,7 @@ git diff --cached | grep -E "(token|key|pass|secret|password|api_key).*=.*['\"][
 |----------------|------|------------------|
 | SecretRef | `~/.openclaw/out/` | Verschlüsselt mit `pass` (GPG) oder `age`. Backup nach `~/backups/secrets-<datum>.tar.gpg`. |
 | gh-CLI | `~/.config/gh/hosts.yml` | Manuell backuppen (Inhalt ist nicht katastrophal, aber Token schon). |
-| Hermes-auth | `~/.hermes/auth.json` (0600) | Backup vor jeder Profil-Änderung. |
+| OpenClaw-auth | `openclaw secrets`-Store (0600) | Backup vor jeder Profil-Änderung. |
 
 **Notfall-Recovery:** `~/.openclaw/out/` ist das einzige Source-of-Truth. Geht es verloren,
 müssen alle Secrets bei den jeweiligen Anbietern regeneriert werden.

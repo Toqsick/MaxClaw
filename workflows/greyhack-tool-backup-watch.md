@@ -46,7 +46,7 @@ fi
 exit 0
 ```
 
-> Das ist ein **Shell-Wrapper**, kein LLM-Job. Im `hermes cron create`-Aufruf wird der obige
+> Das ist ein **Shell-Wrapper**, kein LLM-Job. Im `openclaw cron add`-Aufruf wird der obige
 > Code als `--command` übergeben statt als Prompt; Skills entfallen.
 
 ## Einrichten

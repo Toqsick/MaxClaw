@@ -1,5 +1,7 @@
 # MaxClaw Workflows V2 — Übersicht & Begründung
 
+> **📌 Historischer Stand (2026-07-04).** Die MaxClaw-Runtime wurde am 2026-07-07 auf **OpenClaw** migriert (Config: `config/openclaw.json` + `exec-approvals.json`, siehe README). Referenzen unten auf `hermes …`, `~/.hermes/` oder `config.yaml` beschreiben den damaligen Stand und werden bewusst nicht rückwirkend umgeschrieben.
+
 > **Stand:** 2026-07-04 · **Autor:** MaxClaw-Workflow-Architekt (Queen-Pattern)
 > **Scope:** Erweiterung der bestehenden 3 Crons um 5 neue autonome Workflows.
 

@@ -6,7 +6,7 @@ Letzte Registrierung: 2026-07-04 05:13:32
 
 - **greyhack-tool-backup-watch** (`0 */6 * * *`) → `workflows/greyhack-tool-backup-watch.md`
 
-Verifizieren: `hermes cron list`
+Verifizieren: `openclaw cron list`
 
 ## Hilfe
 ```bash

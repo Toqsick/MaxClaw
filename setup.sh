@@ -15,13 +15,11 @@ err()   { echo -e "${RED}✗${NC} $*" >&2; }
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# --- Workspace-Ort bestimmen (OpenClaw oder Hermes) --------------------------
+# --- Workspace-Ort bestimmen (OpenClaw) --------------------------------------
 if [[ -d "$HOME/.openclaw" ]]; then
     WORKSPACE="$HOME/.openclaw/agent"
-elif [[ -d "$HOME/.hermes" ]]; then
-    WORKSPACE="$HOME/.hermes"
 else
-    warn "Kein bestehender Workspace gefunden."
+    warn "Kein bestehender OpenClaw-Workspace gefunden."
     read -rp "Workspace-Pfad angeben [$HOME/.openclaw/agent]: " WORKSPACE
     WORKSPACE="${WORKSPACE:-$HOME/.openclaw/agent}"
 fi
@@ -62,15 +60,20 @@ if [[ -d "$REPO_DIR/skills/project-doc-sync" ]]; then
     info "Skill installiert: project-doc-sync"
 fi
 
-# --- config.yaml als Vorlage (NICHT automatisch aktivieren) ------------------
-if [[ -f "$REPO_DIR/config/config.yaml" ]]; then
-    cp "$REPO_DIR/config/config.yaml" "$WORKSPACE/config.yaml.example"
-    warn "config.yaml als config.yaml.example abgelegt — vor Aktivierung prüfen (docs/07)!"
-fi
+# --- OpenClaw-Config als Vorlage (NICHT automatisch aktivieren) --------------
+# OpenClaw-Config-Root ist der Parent des agent/-Workspace (z.B. ~/.openclaw/).
+CFG_ROOT="$(dirname "$WORKSPACE")"
+for cfg in openclaw.json exec-approvals.json greyhack.yaml; do
+    if [[ -f "$REPO_DIR/config/$cfg" ]]; then
+        cp "$REPO_DIR/config/$cfg" "$CFG_ROOT/$cfg.example"
+        warn "$cfg als $cfg.example abgelegt — vor Aktivierung prüfen (docs/07)!"
+    fi
+done
 
 echo ""
 info "Fertig. Nächste Schritte:"
-echo "   1. Core-Dateien in $WORKSPACE anpassen (Namen, Tokens via SecretRef)."
-echo "   2. config.yaml.example prüfen → in config.yaml umbenennen, wenn ok."
+echo "   1. Core-Dateien in $WORKSPACE anpassen (Namen, Secrets via 'openclaw secrets')."
+echo "   2. openclaw.json.example + exec-approvals.json.example prüfen → ohne .example aktivieren."
+echo "      Danach:  openclaw config validate && openclaw doctor --fix"
 echo "   3. Workflows registrieren:  ./workflows/register-workflows.sh"
 echo "   4. Security-Block lesen:    docs/07-security.md"

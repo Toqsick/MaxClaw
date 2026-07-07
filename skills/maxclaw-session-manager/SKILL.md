@@ -2,7 +2,7 @@
 name: maxclaw-session-manager
 description: Trackt laufende und abgeschlossene MaxClaw-Sessions (Cron-Jobs, Build-Runs, User-Tasks) in einer lokalen JSONL-DB; erkennt Wiederholungs-Pattern und triggert Cooldown/Caching. Trigger bei jedem cron-driven Workflow und jedem manuellen Task-Start.
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
@@ -12,7 +12,7 @@ triggers:
   - start: jeder neue User-Task
   - audit: bei "was hat MaxClaw zuletzt getan?"-Fragen
 metadata:
-  hermes:
+  openclaw:
     tags:
       - workflow
       - session
@@ -108,9 +108,9 @@ if __name__ == "__main__":
 # run-session.sh — wrappt einen Job in start/finish
 set -euo pipefail
 NAME="${1:?job-name}"; shift
-python3 ~/.hermes/skills/maxclaw-session-manager/scripts/session.py start "$NAME"
+python3 ~/.openclaw/skills/maxclaw-session-manager/scripts/session.py start "$NAME"
 rc=0; "$@" || rc=$?
-python3 ~/.hermes/skills/maxclaw-session-manager/scripts/session.py finish "$NAME" "$rc"
+python3 ~/.openclaw/skills/maxclaw-session-manager/scripts/session.py finish "$NAME" "$rc"
 exit $rc
 ```
 
@@ -145,6 +145,6 @@ for name, n in cnt.most_common(10):
 
 ```cron
 # In jedem registrierten Workflow-Script:
-exec /home/bratan/.hermes/skills/maxclaw-session-manager/scripts/run-session.sh \
-    "github-pr-monitor" /home/bratan/.hermes/skills/github-ops/scripts/gh-pr-monitor.sh
+exec /home/bratan/.openclaw/skills/maxclaw-session-manager/scripts/run-session.sh \
+    "github-pr-monitor" /home/bratan/.openclaw/skills/github-ops/scripts/gh-pr-monitor.sh
 ```
