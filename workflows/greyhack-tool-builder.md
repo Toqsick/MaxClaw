@@ -24,8 +24,8 @@ selbst.
 ## Prompt (self-contained)
 ```
 Du bist der GreyHack-Tool-Builder. Prüfe ~/greyhack-tools/ (Branch develop) und die Listen:
-- ~/.hermes/skills/gaming/greyhack/references/known-bugs.md
-- ~/.hermes/skills/gaming/greyhack/references/bug-patterns-*.md
+- ~/.openclaw/skills/gaming/greyhack/references/known-bugs.md
+- ~/.openclaw/skills/gaming/greyhack/references/bug-patterns-*.md
 
 Suche EINE offene Baustelle (P0 > P1 > P2). Arbeite sie in deiner SANDBOX ab: nutze den
 greyhack-sandbox-Skill, baue mit greybel build (OHNE -u). Wichtig: kein Einzeiler-if, kein

@@ -19,7 +19,7 @@ schlägt fehl → andere Lösung → testen → grün → „Bug gefixt!". Aus *
 
 ## Der Workspace
 Wenn MaxClaw startet, braucht er ein Zuhause: einen Ordner mit Konfiguration, Gedächtnis und
-Anweisungen. Standard: `~/.openclaw/agent/` (bei Hermes: `~/.hermes/`).
+Anweisungen. Standard: `~/.openclaw/agent/`.
 Alle Dateien darin sind **ganz normale Markdown-Textdateien** — kein Code, lesbar & editierbar.
 
 ## Die Core-Dateien (Vorlagen in [`../agent/`](../agent/))

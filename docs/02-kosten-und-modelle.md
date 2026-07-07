@@ -61,7 +61,7 @@ automatisch auf ein **kostenloses** Fallback-Modell (OpenRouter hat viele Free-M
 > Erst kostenlose/lokale Optionen bevorzugen. Kostenpflichtige Modelle nur, wenn der Mehrwert
 > konkret begründet ist. Bei Modellvergleichen immer Nutzen + Kosten + Komplexität zusammen sehen.
 
-Siehe [`config/config.yaml`](../config/config.yaml) für das konkrete Routing bei MaxClaw.
+Siehe [`config/openclaw.json`](../config/openclaw.json) für das konkrete Routing bei MaxClaw.
 
 ## Nächste Ausbaustufe
 → [Block 3 — Das Gehirn des Agenten](03-das-gehirn.md)

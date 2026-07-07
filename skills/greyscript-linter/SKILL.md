@@ -2,7 +2,7 @@
 name: greyscript-linter
 description: Static-Analyse für GreyScript-Quellen VOR greybel-Build. Erkennt fehlende //command-Marker, nicht-erlaubte Builtins (run, is_folder, str_repeat u.a.) und gibt klare Fehler/Warnings aus. Trigger bei jedem neuen Build und als Pre-Commit-Hook.
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
@@ -13,7 +13,7 @@ triggers:
   - pre-commit: vor `git commit` mit .src-Änderungen
   - manual: "lint-greyscript.py file.src"
 metadata:
-  hermes:
+  openclaw:
     tags:
       - code
       - greyscript
@@ -127,7 +127,7 @@ greybel build "$@"
 # .git/hooks/pre-commit (in Tool-Repo)
 #!/usr/bin/env bash
 git diff --cached --name-only -- '*.src' | \
-  xargs -r python3 ~/.hermes/skills/greyscript-linter/scripts/lint-greyscript.py
+  xargs -r python3 ~/.openclaw/skills/greyscript-linter/scripts/lint-greyscript.py
 ```
 
 ## Pitfalls
@@ -147,5 +147,5 @@ git diff --cached --name-only -- '*.src' | \
 ```cron
 # Täglich 03:00 — alle Tool-Repos linten
 0 3 * * * find /home/bratan/maxclaw-tools -name '*.src' | \
-  xargs python3 ~/.hermes/skills/greyscript-linter/scripts/lint-greyscript.py
+  xargs python3 ~/.openclaw/skills/greyscript-linter/scripts/lint-greyscript.py
 ```

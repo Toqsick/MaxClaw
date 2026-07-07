@@ -22,7 +22,7 @@ ist. Ton: freundlich, wach, knapp. Deutsch. Format: max. 8 Bullet-Points.
 
 ## Einrichten
 ```bash
-# via OpenClaw/Hermes Cron:
+# via OpenClaw Cron:
 #   Schedule: "0 7 * * *"
 #   Deliver:  telegram
 # Siehe register-workflows.sh

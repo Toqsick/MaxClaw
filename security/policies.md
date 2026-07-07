@@ -5,7 +5,7 @@
 > sicherheitsrelevanten Aktion.
 
 Diese Datei ist die **verbindliche Policy** für MaxClaw auf Bastis Host. Sie wird ergänzend zu
-[`config/config.yaml`](../config/config.yaml) und [`docs/07-security.md`](../docs/07-security.md)
+[`config/openclaw.json`](../config/openclaw.json) und [`docs/07-security.md`](../docs/07-security.md)
 gelebt. Bei Konflikt gilt die **restriktivere** Auslegung.
 
 ---
@@ -29,9 +29,9 @@ gelebt. Bei Konflikt gilt die **restriktivere** Auslegung.
 
 | Aktion | Status | Bedingung / Begründung |
 |--------|--------|------------------------|
-| Lesen in `~/greyhack-tools/`, `~/docs/`, `~/.openclaw/`, `~/.hermes/` | ✅ erlaubt | Primäre Arbeitsverzeichnisse. |
-| **Schreiben** nur in den deklarierten `write_paths` der config.yaml | ✅ erlaubt | Default-Deny-Pfad. |
-| Schreiben außerhalb `write_paths` | ❌ verboten | Schutz vor Datenlecks / Wildwuchs. |
+| Lesen in `~/greyhack-tools/`, `~/docs/`, `~/.openclaw/` | ✅ erlaubt | Primäre Arbeitsverzeichnisse. |
+| **Schreiben** nur im OpenClaw-Workspace (Sandbox-Grenze) | ✅ erlaubt | Default-Deny-Pfad. |
+| Schreiben außerhalb des Workspace | ❌ verboten | Schutz vor Datenlecks / Wildwuchs. |
 | Löschen außerhalb `~/greyhack-tools/build/` und `~/.cache/` | ⚠️ **Bestätigungspflicht** | AGENTS.md §Bestätigungspflicht. |
 | Welt-beschreibbare Files (`chmod 777`) anlegen | ❌ verboten | Klassisches Linux-Sicherheits-No-Go. |
 | Symlinks auf `/etc`, `~/.ssh`, `~/.gnupg` anlegen | ❌ verboten | Privater Schlüssel-Bereich. |
@@ -68,7 +68,7 @@ gelebt. Bei Konflikt gilt die **restriktivere** Auslegung.
 | Pattern | Status | Begründung |
 |---------|--------|------------|
 | SecretRef-Backend nutzen (`~/.openclaw/out/`, 0700) | ✅ erlaubt (Pflicht) | Verschlüsselte Persistenz. |
-| Secret in `config.yaml`, `*.yaml`, `*.json` committen | ❌ verboten | `.gitignore` blockt; trotzdem Pre-Commit-Hook sinnvoll. |
+| Secret in `openclaw.json`, `*.yaml`, `*.json` committen | ❌ verboten | `.gitignore` blockt; trotzdem Pre-Commit-Hook sinnvoll. |
 | Secret in `agent/MEMORY.md` notieren | ❌ verboten | Memory ist exportierbar (Claw-Sync, Backups). |
 | Secret in Telegram-Nachricht oder Tool-Output | ❌ verboten | Kein Token-Leak in Chats. |
 | Secret aus `auth.json` in einer Antwort zitieren | ❌ verboten | Sensible Felder müssen geredacted werden. |
@@ -156,7 +156,7 @@ Eingehend: ausschließlich Loopback. Das Gateway darf **niemals** auf `0.0.0.0` 
 
 `~/bin/maxclaw-security-audit.sh` prüft **täglich** alle oben genannten Punkte und schreibt
 einen JSON-Report nach `~/logs/maxclaw-security-audit-LAST.json`. Bei P0-Befund: sofortiger
-Telegram-Alert via Hermes-Gateway.
+Telegram-Alert via OpenClaw-Gateway.
 
 ---
 

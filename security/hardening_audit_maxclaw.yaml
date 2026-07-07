@@ -36,11 +36,11 @@ phase_0_backup_admin:
       description: "SecretRef-Backend vorhanden unter ~/.openclaw/out/"
       command: "test -d $HOME/.openclaw/out"
       expect: directory_present
-      remediation: "OpenClaw-Workspace initialisieren oder Hermes-Config sichern."
+      remediation: "OpenClaw-Workspace initialisieren oder OpenClaw-Config sichern."
 
     - id: backup.config_backup_recent
-      description: "Letzte config.yaml-Sicherung < 14 Tage alt"
-      command: "find $HOME/.hermes -name 'config.yaml.bak.*' -mtime -14"
+      description: "Letzte openclaw.json-Sicherung < 14 Tage alt"
+      command: "find $HOME/.openclaw -name 'openclaw.json.bak.*' -mtime -14"
       expect: at_least_one_match
       threshold_days: 14
       remediation: "Vor jeder Config-Änderung Snapshot anlegen."
@@ -92,7 +92,7 @@ phase_2_port_audit:
       expect_match: "127.0.0.1:18789"
       expect_no_match: "0.0.0.0:18789"
       severity: P0
-      remediation: "config.yaml: gateway.bind = '127.0.0.1' (nicht 0.0.0.0!)."
+      remediation: "openclaw.json: gateway.bind = '127.0.0.1' (nicht 0.0.0.0!)."
 
     - id: port.no_unexpected_listeners
       description: "Keine unerwarteten offenen Ports (Listen auf 0.0.0.0)"
@@ -111,7 +111,7 @@ phase_2_port_audit:
       command: "ss -ltn | grep -E ':18789\\s' | grep -v 127.0.0.1"
       expect: empty
       severity: P0
-      remediation: "Sofort .openclaw/.hermes stoppen, dann gateway.bind prüfen."
+      remediation: "Sofort OpenClaw-Gateway stoppen, dann gateway.bind prüfen."
 
 # -----------------------------------------------------------------------------
 # PHASE 3 — Firewall / Egress-Isolation
@@ -154,8 +154,8 @@ phase_4_permission_check:
   enabled: true
   checks:
     - id: perm.write_paths_declared
-      description: "write_paths in config.yaml deklariert und konsistent mit tatsächlich genutzten Verzeichnissen"
-      config_field: "permissions.file.write_paths"
+      description: "Workspace-/Sandbox-Schreibgrenze konsistent mit tatsächlich genutzten Verzeichnissen"
+      config_field: "agents.defaults.sandbox"
       expect:
         - "~/greyhack-tools/"
         - "~/docs/"
@@ -165,7 +165,7 @@ phase_4_permission_check:
 
     - id: perm.no_world_writable_in_workspace
       description: "Keine world-writable Dateien in ~/greyhack-tools und ~/.openclaw"
-      command: "find ~/greyhack-tools ~/.openclaw ~/.hermes -type f -perm -o+w 2>/dev/null"
+      command: "find ~/greyhack-tools ~/.openclaw -type f -perm -o+w 2>/dev/null"
       expect: empty
       severity: P0
       remediation: "chmod o-w <file> — oder Audit-Trail in Telegram."
@@ -184,12 +184,12 @@ phase_4_permission_check:
       severity: P1
       remediation: "chmod 700 ~/.ssh"
 
-    - id: perm.config_yaml_world_readable
-      description: "config.yaml NICHT world-readable"
-      command: "stat -c '%a' $HOME/.hermes/config.yaml"
+    - id: perm.openclaw_json_world_readable
+      description: "openclaw.json NICHT world-readable"
+      command: "stat -c '%a' $HOME/.openclaw/openclaw.json"
       expect: not_in ["644", "666", "777"]
       severity: P1
-      remediation: "chmod 600 ~/.hermes/config.yaml"
+      remediation: "chmod 600 ~/.openclaw/openclaw.json"
 
     - id: perm.no_sudoers_modifications
       description: "/etc/sudoers wurde seit letztem Audit nicht geändert"
@@ -205,8 +205,8 @@ phase_5_trace_monitoring:
   enabled: true
   checks:
     - id: trace.agent_running_processes
-      description: "Welche MaxClaw/Hermes-Prozesse laufen aktuell?"
-      command: "ps -eo pid,etime,user,comm | grep -E 'hermes|openclaw|maxclaw' | grep -v grep"
+      description: "Welche MaxClaw/OpenClaw-Prozesse laufen aktuell?"
+      command: "ps -eo pid,etime,user,comm | grep -E 'openclaw|maxclaw' | grep -v grep"
       expect: documented_in_inventory
       severity_if_orphan: P1
       remediation: "Unbekannte Prozesse identifizieren; ggf. kill -9 nach Rückfrage."
@@ -219,8 +219,8 @@ phase_5_trace_monitoring:
       remediation: "Sofort netzwerk kill via ufw emergency-Deny; Telegram-Alert."
 
     - id: trace.skill_installation_changes
-      description: "Neue Skills seit letztem Audit in ~/.hermes/skills/"
-      command: "find ~/.hermes/skills ~/.openclaw/skills -type d -newer /tmp/maxclaw-clone/security/hardening_audit_maxclaw.yaml -mtime -7 2>/dev/null"
+      description: "Neue Skills seit letztem Audit in ~/.openclaw/skills/"
+      command: "find ~/.openclaw/skills -type d -newer /tmp/maxclaw-clone/security/hardening_audit_maxclaw.yaml -mtime -7 2>/dev/null"
       expect: empty
       severity_if_unauthorized: P1
       remediation: "Neue Skills manuell reviewen; nur aus vertrauenswürdigen Quellen."

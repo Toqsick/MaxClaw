@@ -1,5 +1,7 @@
 # MaxClaw v3.0 Upgrade — 2026-07-04
 
+> **📌 Historischer Stand (2026-07-04).** Die MaxClaw-Runtime wurde am 2026-07-07 auf **OpenClaw** migriert (Config: `config/openclaw.json` + `exec-approvals.json`, siehe README). Referenzen unten auf `hermes …`, `~/.hermes/` oder `config.yaml` beschreiben den damaligen Stand und werden bewusst nicht rückwirkend umgeschrieben.
+
 > **Ziel:** MaxClaw vom Setup-Template zum eigenständigen GreyHack-Arbeiter.
 > **Branch:** `feat/maxclaw-v3-upgrade` (4 Commits vor `main`, autorisiert durch Basti A1+B1+C2)
 > **Commit-Autor-Konvention:** `Bratan (Yuno via Owl Alpha) <bratan@bratan-17-P1>` (Mnemosyne, etabliert 2026-06-25)

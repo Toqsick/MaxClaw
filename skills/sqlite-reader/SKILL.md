@@ -1,8 +1,8 @@
 ---
 name: sqlite-reader
-description: Liest SQLite-Datenbanken strikt read-only (kein Schreibrecht nötig), inspiziert Schema inkl. Foreign-Key-Discovery und generiert sichere SELECT-Wizards. Trigger bei jeder DB-Analyse (GreyHack player.db, Hermes-Sessions, beliebige .sqlite3).
+description: Liest SQLite-Datenbanken strikt read-only (kein Schreibrecht nötig), inspiziert Schema inkl. Foreign-Key-Discovery und generiert sichere SELECT-Wizards. Trigger bei jeder DB-Analyse (GreyHack player.db, OpenClaw-Sessions, beliebige .sqlite3).
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
@@ -12,7 +12,7 @@ triggers:
   - debugging: bei "warum steht da was?" in Session/Game-DB
   - cron: weekly DB-Health-Check (VACUUM status, integrity)
 metadata:
-  hermes:
+  openclaw:
     tags:
       - data
       - sqlite
@@ -28,7 +28,7 @@ URI-Parameter — selbst wenn das Script root läuft, kollidiert kein Lock.
 
 ## When to use
 
-- MaxClaw findet eine `.db` (GreyHack-Player, Hermes-Session-DB, Tool-State)
+- MaxClaw findet eine `.db` (GreyHack-Player, OpenClaw-Session-DB, Tool-State)
   und soll sie verstehen, ohne sie zu verändern.
 - Schema-Mapping für ein neues Tool: was sind die Foreign-Keys, wo liegen die
   "wichtigen" Tabellen?
@@ -91,8 +91,8 @@ sqlite3 "file:$DB?mode=ro" -header -column <<< "$SQL"
 sqlite_query.sh ~/.local/share/GreyHack/player.db \
   "SELECT name, type, count FROM inventory ORDER BY count DESC LIMIT 10"
 
-# Hermes-Session-DB: heutige Sessions
-sqlite_query.sh ~/.hermes/sessions.db \
+# OpenClaw-Session-DB: heutige Sessions
+sqlite_query.sh ~/.openclaw/sessions.db \
   "SELECT id, title, started FROM sessions WHERE date(started)=date('now')"
 ```
 
@@ -129,7 +129,7 @@ done
 
 ```cron
 # So 04:00 — wöchentlicher DB-Health-Check
-0 4 * * 0 /home/bratan/.hermes/skills/sqlite-reader/scripts/sqlite_health.sh \
+0 4 * * 0 /home/bratan/.openclaw/skills/sqlite-reader/scripts/sqlite_health.sh \
     /home/bratan/.local/share/GreyHack/player.db \
-    /home/bratan/.hermes/sessions.db
+    /home/bratan/.openclaw/sessions.db
 ```

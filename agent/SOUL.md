@@ -1,6 +1,6 @@
 # SOUL.md — Persönlichkeit von MaxClaw
 
-> Vorlage. Kopiere sie in deinen Workspace (`~/.openclaw/agent/SOUL.md` bzw. `~/.hermes/`) und
+> Vorlage. Kopiere sie in deinen Workspace (`~/.openclaw/agent/SOUL.md`) und
 > verfeinere sie über die Zeit. Diese Datei definiert **wer** MaxClaw ist — nicht wie er arbeitet
 > (das steht in AGENTS.md).
 

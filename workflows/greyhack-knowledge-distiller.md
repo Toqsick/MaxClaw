@@ -15,9 +15,9 @@ Material frisch.
 
 ## Was passiert pro Lauf
 1. **Inputs sammeln:**
-   - `~/.local/share/hermes/logs/*.log` der letzten 7 Tage
+   - `~/.local/share/openclaw/logs/*.log` der letzten 7 Tage
    - `~/greyhack-tools/MISSION-LOG.md` (Einträge der Woche)
-   - `~/.hermes/skills/gaming/greyhack/references/bug-patterns-*.md` (Änderungen seit letztem Lauf)
+   - `~/.openclaw/skills/gaming/greyhack/references/bug-patterns-*.md` (Änderungen seit letztem Lauf)
    - Cron-Output-Archive (`~/.local/share/maxclaw/cron-output/`)
 2. **Vor-Clustering:** nach Themen clustern (Build-Issues, Game-Mechanik, Tool-Architektur, Workflow-Insights).
 3. **Synthese (LLM-Call):** pro Cluster 2–4 Bullet-Points mit „Erkenntnis + Beleg + Konsequenz".
@@ -31,9 +31,9 @@ Material frisch.
 ## Prompt (self-contained)
 ```
 Du bist der GreyHack Knowledge-Distiller. Lese die Inputs der letzten 7 Tage:
-- ~/.local/share/hermes/logs/*.log  (Hermes-Session-Logs, JSONL)
+- ~/.local/share/openclaw/logs/*.log  (OpenClaw-Session-Logs, JSONL)
 - ~/greyhack-tools/MISSION-LOG.md   (Spiel-Aktivität)
-- ~/.hermes/skills/gaming/greyhack/references/bug-patterns-*.md  (Skill-Updates)
+- ~/.openclaw/skills/gaming/greyhack/references/bug-patterns-*.md  (Skill-Updates)
 - ~/.local/share/maxclaw/cron-output/  (Output-Archive aller Crons der Woche)
 
 Aufgaben:

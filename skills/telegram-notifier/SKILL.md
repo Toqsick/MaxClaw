@@ -2,18 +2,18 @@
 name: telegram-notifier
 description: Versendet formatierte Telegram-Messages (Markdown→HTML-Konversion) per Bot-API. Watchdog-Modus (silent on success) für Cron-Jobs, plus strukturierte Alert/Daily-Summary-Templates. Trigger bei jedem Alert, jedem Cron-Job (silent on success), jedem Daily-Summary.
 version: 1.0.0
-author: Hermes Agent (MaxClaw Skill-Set)
+author: OpenClaw Agent (MaxClaw Skill-Set)
 license: MIT
 platforms:
   - linux
   - macos
   - windows
 triggers:
-  - cron: jeder registrierte Hermes-Cron-Job
+  - cron: jeder registrierte OpenClaw-Cron-Job
   - alert: bei Script-Fehler, Build-Bruch, Health-Alert
   - summary: daily-briefing (07:00)
 metadata:
-  hermes:
+  openclaw:
     tags:
       - comms
       - telegram
@@ -131,7 +131,7 @@ briefing() {
 *GitHub-Monitor:* $(tail -1 ~/.cache/maxclaw/pr-monitor.txt)
 *Snapshots:* $(du -sh ~/.local/share/maxclaw/snapshots/ | cut -f1)
 
-Nächste Cron: $(hermes cron list --json | jq -r '.[0].next_run')"
+Nächste Cron: $(openclaw cron list --json | jq -r '.[0].next_run')"
 }
 ```
 
@@ -153,7 +153,7 @@ Nächste Cron: $(hermes cron list --json | jq -r '.[0].next_run')"
 
 ```cron
 # Daily Briefing
-0 7 * * * /home/bratan/.hermes/skills/telegram-notifier/scripts/watchdog.sh \
+0 7 * * * /home/bratan/.openclaw/skills/telegram-notifier/scripts/watchdog.sh \
     "daily-briefing" \
     /home/bratan/maxclaw/workflows/daily-briefing.sh
 ```

@@ -96,7 +96,7 @@ Konkret beim v3.0-Upgrade wurden 5 Subagenten dispatcht:
 | Lane | Subagent-Rolle | Liefer-Artefakte |
 |------|----------------|------------------|
 | 🔧 DB-Analyst | Sandbox-Snapshot + Diff-Engine | `greyhack-db-snapshot.sh`, `greyhack-db-analyze.py`, Cron-Workflow |
-| 🛠️ Tool-Builder-Refactor | Best-Practices aus 28 yuno-tools + MaxClaw v3.0 Settings | 6 Agent-Files neu, config.yaml v3.0 |
+| 🛠️ Tool-Builder-Refactor | Best-Practices aus 28 yuno-tools + MaxClaw v3.0 Settings | 6 Agent-Files neu, openclaw.json |
 | 📋 Workflow-Architekt | 5 neue autonome Crons | 5 Cron-Defs + register-workflows.sh UPDATE |
 | 📚 Skill-Set-Author | 9 Allround-Skills | 8 neue Skills + INSTALL.md + SKILL-INDEX.md |
 | 🛡️ Security-Auditor | Self-Audit + Patch-Vorlage | 20-Findings-Report + hardening-config |
@@ -107,8 +107,8 @@ für die ausführliche Retrospektive inkl. der **Queen-Pitfall-Checkliste**:
 
 - **Pitfall #5: Verify EVERY claim** — Subagent-Selbstauskünfte sind Selbstberichte, keine Fakten.
   Nach jedem delegaten Task: `ls`, `bash -n`, `python3 -c`, `pyyaml.safe_load` zur Verifikation.
-- **Pitfall #10: Model-Param wird ignoriert** bei `hermes cron create` — Modell wird via
-  `cronjob action=update job_id=… provider=… model=…` nachgepinnt.
+- **Pitfall #10: Model-Param wird ignoriert** bei `openclaw cron add` — Modell wird via
+  Job-/Session-Provider nachgepinnt (Flag-Namen mit `openclaw cron --help` prüfen).
 
 ## Nächste Ausbaustufe
 → [Block 5 — Automatisierung](05-automatisierung.md)

@@ -1,0 +1,221 @@
+// =============================================================================
+// MaxClaw — openclaw.json  (JSON5)  — KANONISCHE OpenClaw-Runtime-Config
+// Ablageort:  ~/.openclaw/openclaw.json
+// -----------------------------------------------------------------------------
+// MaxClaw ist die OpenClaw-Instanz bei Minimax. Diese Datei ersetzt die alte
+// Hermes-YAML (config/config.yaml, entfernt). Aufteilung ab dieser Version:
+//   - openclaw.json        → OpenClaw-RUNTIME (Modelle, Tools, Channels, Gateway)
+//   - exec-approvals.json  → Command-Allowlist/Denylist (greybel/git/rm/…)
+//   - greyhack.yaml        → GreyHack-DOMÄNEN-Daten (Missionen, Build-Regeln) —
+//                            KEINE OpenClaw-Config, wird NICHT von OpenClaw geparst.
+//
+// P0 VOR dem Einspielen (Config kann das nicht, CLI schon):
+//   openclaw --version            # muss >= 2026.1.29 (CVE-2026-25253 "ClawJacked")
+//   openclaw token:rotate --force --length 64
+//   openclaw secrets audit        # ersetzt das alte hermes_native-Secret-Backend
+// Nach dem Einspielen:
+//   openclaw config validate && openclaw doctor --fix   # doctor strippt unbek. Keys
+//   QMD-Gotcha: Gateway 1-2x neu starten, sonst leere Memory-Treffer.
+// =============================================================================
+{
+  env: {
+    OPENROUTER_API_KEY: "${OPENROUTER_API_KEY}",
+    TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN}",
+  },
+
+  // Secrets OpenClaw-nativ: Profile hier, Schlüssel via `openclaw secrets`.
+  // (Löst die alte "hermes_native vs SecretRef"-Frage auf OpenClaw-Ebene.)
+  auth: {
+    profiles: {
+      "openrouter:default": { provider: "openrouter", mode: "api_key" },
+    },
+  },
+
+  // === Agenten =================================================================
+  agents: {
+    defaults: {
+      identity: "MaxClaw",
+      workspace: "~/maxclaw-workspace",
+
+      model: {
+        primary: "openrouter/moonshotai/kimi-k2.5",
+        fallbacks: ["openrouter/moonshotai/kimi-k2.5:free"],
+      },
+      models: {
+        "openrouter/moonshotai/kimi-k2.5":      { alias: "Main" },
+        "openrouter/anthropic/claude-opus-4.6": { alias: "Heavy" },
+        "openrouter/deepseek/deepseek-chat":    { alias: "Deep" },
+        "openrouter/google/gemini-2.5-flash":   { alias: "Cheap" },
+      },
+
+      // Prompt-Caching Baseline. Für openrouter/moonshotai/* handhabt OpenRouter
+      // das Provider-seitige Caching; cache-ttl-Pruning ist erlaubt.
+      params: { cacheRetention: "short" },
+
+      // Session-Pruning: trimmt alte Tool-Ergebnisse vor jedem LLM-Call (nur
+      // In-Memory, Transkript bleibt vollständig). Heartbeat < TTL hält Cache warm.
+      contextPruning: { mode: "cache-ttl", ttl: "1h" },
+      heartbeat: { every: "30m" },   // < 1h TTL
+
+      // Spezialisierte Subagenten (Queen-Bee-Schwarm, billiges Modell)
+      subagents: {
+        model: "openrouter/google/gemini-2.5-flash",
+        maxConcurrent: 5,
+        runTimeoutSeconds: 900,
+        allowAgents: ["coder", "recon"],
+      },
+
+      sandbox: { mode: "all", sessionToolsVisibility: "spawned" },
+
+      // Gedächtnis: Session-Suche + Quellen
+      memorySearch: {
+        experimental: { sessionMemory: true },
+        sources: ["memory", "sessions"],
+        extraPaths: ["~/docs", "~/greyhack-tools/mission-logs"],
+      },
+
+      // Memory-Flush vor Kompaktierung
+      compaction: {
+        memoryFlush: { enabled: true },
+      },
+
+      // Repo-Skills (Verzeichnisse unter skills/). openclaw-cli-quirks = ehem.
+      // hermes-cli-quirks (auf OpenClaw-CLI umgestellt).
+      skills: [
+        "sandbox-snapshot", "sqlite-reader", "greyscript-linter", "github-ops",
+        "bash-script-builder", "telegram-notifier", "knowledge-distiller",
+        "maxclaw-session-manager", "openclaw-cli-quirks", "project-doc-sync",
+      ],
+    },
+
+    // Fach-Agenten mit gezieltem Caching
+    list: [
+      { id: "main", default: true },
+      {
+        id: "coder",
+        model: { primary: "openrouter/anthropic/claude-opus-4.6" },
+        // Opus-Coder ist high-traffic genug für Cache-Amortisierung:
+        models: { "openrouter/anthropic/claude-opus-4.6": { params: { cacheRetention: "short" } } },
+        skills: ["greyscript-linter", "github-ops", "bash-script-builder"],
+      },
+      {
+        id: "recon",
+        model: { primary: "openrouter/google/gemini-2.5-flash" },
+        // Low-Traffic-Schwarm: Cache-Writes würden ungenutzt ablaufen -> aus.
+        params: { cacheRetention: "none" },
+        skills: ["sqlite-reader", "knowledge-distiller"],
+      },
+    ],
+  },
+
+  // === Gedächtnis-Backend (QMD) ===============================================
+  // BM25 + Vektor + Reranking, voll lokal (GGUF via node-llama-cpp).
+  // searchMode "search" (BM25) als Default = keine teure Embedding-Inferenz im
+  // Heartbeat. Semantisch nur on-demand: `qmd query "..."`.
+  // sqlite-vec installieren, sonst O(n)-Cosine-Fallback (langsam).
+  memory: {
+    backend: "qmd",
+    citations: "auto",
+    qmd: {
+      searchMode: "search",                // BM25 default
+      includeDefaultMemory: true,
+      sessions: { enabled: true },
+      update: { interval: "5m", debounceMs: 15000 },
+      limits: { maxResults: 6, timeoutMs: 4000 },
+      scope: { default: "deny", rules: [{ action: "allow", match: { chatType: "direct" } }] },
+      paths: [
+        { name: "docs",     path: "~/docs",                        pattern: "**/*.md" },
+        { name: "greyhack", path: "~/greyhack-tools/mission-logs", pattern: "**/*.md" },
+      ],
+    },
+  },
+
+  // === Tools ==================================================================
+  // Command-Allowlist/Denylist (greybel/git/rm/…) liegt in exec-approvals.json.
+  tools: {
+    profile: "coding",
+    deny: ["browser", "canvas", "group:media"],   // umgeht ~alle CPU-Hotspots + Injection-Vektor
+
+    exec: {
+      mode: "allowlist",
+      ask: "on-miss",
+      askFallback: "deny",
+      strictInlineEval: true,
+      timeoutSec: 1800,
+    },
+
+    loopDetection: {
+      enabled: true,
+      historySize: 30,
+      warningThreshold: 10,
+      criticalThreshold: 20,
+      globalCircuitBreakerThreshold: 30,
+      detectors: { genericRepeat: true, knownPollNoProgress: true, pingPong: true },
+    },
+
+    sessions: { visibility: "agent" },
+
+    // Nur Bastis Chat-ID darf Runtime-/FS-Tools triggern (Injection-Schutz für
+    // untrusted Content wie eingehende Mails via Gmail-MCP).
+    toolsBySender: {
+      "*": { deny: ["group:runtime", "write", "edit", "apply_patch"] },
+      "channel:telegram:7222661188": { alsoAllow: ["group:runtime", "group:fs"] },
+    },
+
+    web: {
+      search: { enabled: true, maxResults: 8, timeoutSeconds: 30 },
+      fetch:  { enabled: false },
+    },
+  },
+
+  // === Plugins / MCP ==========================================================
+  // MCP gebündelt unter plugins.mcp. Gmail-Tools filtern: nur Lesen/Suchen, kein
+  // Löschen/Trashen -> kleinere Injection-Fläche (Mails sind untrusted Content!).
+  plugins: {
+    mcp: {
+      servers: {
+        gmail: {
+          // url / transport / auth aus dem bestehenden Gmail-MCP-Setup übernehmen
+          toolFilter: {
+            include: ["search_*", "get_*", "list_*"],
+            exclude: ["*delete*", "*trash*", "*spam*", "apply_sensitive*"],
+          },
+        },
+      },
+    },
+  },
+
+  // === Channels ===============================================================
+  channels: {
+    telegram: {
+      enabled: true,
+      botToken: "${TELEGRAM_BOT_TOKEN}",
+      dmPolicy: "allowlist",
+      allowFrom: ["tg:7222661188"],
+
+      // Forum-Topics = Kontext-Trennung pro Projekt
+      groupPolicy: "allowlist",
+      streaming: "partial",
+      groupAllowFrom: ["7222661188"],
+      historyLimit: 50,
+      groups: {
+        "DEINE_GRUPPEN_ID": {                 // <- ersetzen (z.B. -100xxxxxxxxxx)
+          allowFrom: ["7222661188"],
+          requireMention: false,
+          topics: {
+            "1": { requireMention: false, systemPrompt: "Allgemein / Inbox-Triage / Termine. Kurz & operativ." },
+            "2": { requireMention: false, systemPrompt: "Hermes V7 — Queen/Worker/Gate/DMZ, Mnemosyne, Refactor-Phasen. Technisch, Ergebnis-fokussiert." },
+            "3": { requireMention: false, systemPrompt: "GreyHack — Missionen (Reraldi 154.19.190.206), greybel-Builds OHNE -u, Sandbox-Recon. Nur Sandbox-Kontext." },
+            "4": { requireMention: false, systemPrompt: "Linux-Assistant — GTK4/LibAdwaita, 8 Panels, pytest-asyncio, Quality-Gates (pylint/mypy/ruff, ≥70% Coverage)." },
+            "5": { requireMention: false, systemPrompt: "Odysseus / hermes-webui — Unification zur nativen UI, Deployment, Audit-Trails." },
+          },
+        },
+      },
+    },
+  },
+
+  // === Gateway ================================================================
+  gateway: { bind: "127.0.0.1", port: 18789 },
+
+  logging: { level: "info", file: "~/logs/openclaw.log", redactSensitive: "tools" },
+}
