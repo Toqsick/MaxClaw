@@ -1,0 +1,17 @@
+name: creative-suite
+display-name: Creative Suite
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/creative-suite/"
+description: |
+  Creative content generation — ASCII art/video, architecture diagrams, infographics, comic strips, pixel art,
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/creative-suite/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

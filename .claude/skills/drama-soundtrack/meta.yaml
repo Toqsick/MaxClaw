@@ -1,0 +1,22 @@
+name: drama-soundtrack
+display-name: Drama Soundtrack
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/media/drama-soundtrack/"
+description: |
+  Drama original soundtrack creation assistant. Creates complete soundtrack suites for TV series, films, and short dramas,
+  including character theme songs, opening themes (OP), ending themes (ED), and scene background music (BGM).
+  Deeply analyzes the plot based on scripts and character biographies, creating custom theme songs for each main character,
+  composing opening and ending themes for the entire show, and crafting background music for key dramatic moments.
+  Supports importing scripts from the short-drama-screenwriter skill, as well as external scripts and character biographies.
+  Tri
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: media
+  original-skill-path: ~/.hermes/skills/media/drama-soundtrack/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

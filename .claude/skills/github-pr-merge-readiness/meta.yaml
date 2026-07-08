@@ -1,0 +1,17 @@
+name: github-pr-merge-readiness
+display-name: Github Pr Merge Readiness
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/github/github-pr-merge-readiness/"
+description: |
+  Assess one or more open PRs for merge-readiness — CI diagnosis, scope hygiene, cross-PR conflict detection, and a structured MERGE/NEEDS-WORK/CLOSE verdict. Distinct from code review (which asks "is the code right?"). Use when user asks "is this ready to merge?", "merge-readiness", "can these two PRs be merged in order?", "PR review for merge", or wants a structured yes/no merge-decision report.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: github
+  original-skill-path: ~/.hermes/skills/github/github-pr-merge-readiness/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

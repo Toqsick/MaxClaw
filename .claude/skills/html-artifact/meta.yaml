@@ -1,0 +1,17 @@
+name: html-artifact
+display-name: Html Artifact
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/html-artifact/"
+description: |
+  Build self-contained HTML files to explain, plan, or review.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/html-artifact/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

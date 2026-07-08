@@ -1,0 +1,17 @@
+name: system-documentation
+display-name: System Documentation
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/note-taking/system-documentation/"
+description: |
+  Maintain a structured Markdown documentation tree for all system builds, fixes, configurations, and project changes. Gives the user a browsable system overview with context for every change we make.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: note-taking
+  original-skill-path: ~/.hermes/skills/note-taking/system-documentation/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

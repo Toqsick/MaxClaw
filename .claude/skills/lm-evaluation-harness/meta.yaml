@@ -1,0 +1,17 @@
+name: lm-evaluation-harness
+display-name: Lm Evaluation Harness
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/evaluation/lm-evaluation-harness/"
+description: |
+  lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: evaluation
+  original-skill-path: ~/.hermes/skills/mlops/evaluation/lm-evaluation-harness/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

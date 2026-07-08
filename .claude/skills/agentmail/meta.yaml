@@ -1,0 +1,17 @@
+name: agentmail
+display-name: Agentmail
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/email/agentmail/"
+description: |
+  Give the agent its own dedicated email inbox via AgentMail. Send, receive, and manage email autonomously using agent-owned email addresses (e.g. hermes-agent@agentmail.to).
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: email
+  original-skill-path: ~/.hermes/skills/email/agentmail/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

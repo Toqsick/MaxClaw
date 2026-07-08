@@ -1,0 +1,17 @@
+name: mlops-suite
+display-name: Mlops Suite
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/mlops/mlops-suite/"
+description: |
+  MLOps tools — model serving (vLLM), local inference (llama.cpp/GGUF), model hub (HuggingFace), experiment tracking (Weights & Biases), audio generation (AudioCraft), image segmentation (SAM), and LLM evaluation. Covers the full ML deployment and experimentation stack.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: mlops
+  original-skill-path: ~/.hermes/skills/mlops/mlops-suite/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

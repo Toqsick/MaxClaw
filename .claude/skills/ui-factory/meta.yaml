@@ -1,0 +1,17 @@
+name: ui-factory
+display-name: Ui Factory
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/ui-factory/"
+description: |
+  Orchestrate the full UI-Factory chain (color-system → design-system → component-library → dashboard) for complex UI tasks. Use when user asks to "build a UI", "create a dashboard", "design an app", "make me a website", "scaffold components from scratch", or wants full-stack UI construction from brief to production-ready code.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/ui-factory/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

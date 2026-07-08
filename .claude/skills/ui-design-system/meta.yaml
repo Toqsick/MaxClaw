@@ -1,0 +1,17 @@
+name: ui-design-system
+display-name: Ui Design System
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/ui-design-system/"
+description: |
+  Generate a complete design system (tokens, colors, typography, spacing scale) as JSON/CSS variables from a brief. Trigger phrases: creative/ui, design, system. Converted from Hermes-Skill (Yuno's mastery library).
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/ui-design-system/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

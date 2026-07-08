@@ -1,0 +1,17 @@
+name: epub-export
+display-name: Epub Export
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/productivity/epub-export/"
+description: |
+  Convert markdown or PDF content to EPUB and deliver to USB/MTP-connected ereaders (Tolino, Kobo, etc.). Covers the full pipeline including PDF extraction, artifact cleaning, CSS optimization, cover generation, and MTP deployment.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: productivity
+  original-skill-path: ~/.hermes/skills/productivity/epub-export/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

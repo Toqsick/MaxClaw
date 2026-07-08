@@ -1,0 +1,17 @@
+name: notebooklm-bridge
+display-name: Notebooklm Bridge
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/skills/notebooklm-bridge/"
+description: |
+  Drive Google's NotebookLM from Hermes via the `notebooklm-py` CLI as a grounded synthesis + memory layer — list/create notebooks, ingest sources (URL, PDF, YouTube, Drive, text), run cited Q&A, and generate artifacts (Audio/Video overview, slides, quiz, flashcards, mind map, report). Triggers when the user wants NotebookLM, "notebook lm", grounded Q&A over a corpus, or audio/video/podcast generation from sources.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: skills
+  original-skill-path: ~/.hermes/skills/notebooklm-bridge/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

@@ -1,0 +1,23 @@
+name: dynamic-poster
+display-name: Dynamic Poster
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/dynamic-poster/"
+description: |
+  Dynamic poster / motion graphic creator for product marketing.
+  Transforms brand assets (logo, product photos) into surreal short video posters
+  using "impossible juxtaposition" — products in physics-defying scenes, shot with realism.
+  Trigger: "dynamic poster," "motion poster," "animated poster," "video poster,"
+  "product poster video," "social media poster," "event teaser,"
+  "motion graphics," "animated visual," "brand motion design," "poster animation."
+  NOT for: long-form promo (use promo-video), MV (use mv-creator), static posters.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/dynamic-poster/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

@@ -1,0 +1,17 @@
+name: image
+display-name: Image
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/image/"
+description: |
+  Invoke when a user shares a reference image and wants new images with the same \"feel\" — composition, color palette, lighting, style, or mood — but different content. Analyzes the image across 10 aesthetic dimensions, collapses into 3 axes (Form / Aesthetic / Mood), then generates using a model matched to the original's origin with adapted prompt style. Supports iterative refinement. Trigger on: \"r
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/image/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

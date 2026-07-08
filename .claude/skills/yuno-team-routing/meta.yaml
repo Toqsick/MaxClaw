@@ -1,0 +1,21 @@
+name: yuno-team-routing
+display-name: Yuno Team Routing
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/skills/yuno-team-routing/"
+description: |
+  Zentrale Routing-Spec für Yuno's Multi-Agent-Team (7 Agents: Yuno +
+  Engineer + Researcher + Designer + Analyst + Writer + Verifier). Load this
+  skill FIRST wenn unklar ist welcher Agent für einen Task zuständig ist.
+  Single-domain Tasks gehen direkt zum zuständigen Agent. Multi-domain Tasks
+  decompose → hand off → verify → synthesize via Yuno. Built 2026-07-07.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: skills
+  original-skill-path: ~/.hermes/skills/yuno-team-routing/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

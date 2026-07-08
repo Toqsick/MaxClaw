@@ -1,0 +1,17 @@
+name: github-workflow
+display-name: Github Workflow
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/github/github-workflow/"
+description: |
+  Complete GitHub workflow: authentication (HTTPS/SSH/gh CLI), PR lifecycle (branch, commit, open, CI, merge), code review (local and PR-level), issue management (create, triage, label, assign), repository management (clone, create, fork, remotes, releases, secrets), and **read-only CI failure diagnosis from issue/PR + workflow YAML**. Plus skill conversion & config-sync workflow (push converted skill sets into populated repos via HTTPS+token URLs, flat-id namespaces, feature branches, secrets pre-flight). NEU 2026-07-03: gh repo create silent-failure, populated-repo push rejection, Hub↔Hermes s
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: github
+  original-skill-path: ~/.hermes/skills/github/github-workflow/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

@@ -1,0 +1,22 @@
+name: nous-multi-lane-routing
+display-name: Nous Multi Lane Routing
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/modeling/nous-multi-lane-routing/"
+description: |
+  Stärken-basiertes Task-Routing mit Provider-Isolation pro Token-Plan.
+  DeepSeek V4 Pro/Flash + StepFun Free via Nous Portal,
+  GLM-5 via Z.ai Token-Plan, MiniMax-M2.7 via Minimax Token-Plan.
+  Kein RAM-Overhead (nur Cloud-Worker), Fallback-Chain Pflicht,
+  Auto-Watchdog gegen Config-Resets.
+  Rollenbezeichnung: Königin, Worker Heavy, Worker Vision, Worker Flash, Gate.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: modeling
+  original-skill-path: ~/.hermes/skills/modeling/nous-multi-lane-routing/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

@@ -1,0 +1,17 @@
+name: system-security-audit
+display-name: System Security Audit
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/devops/system-security-audit/"
+description: |
+  Linux-Sicherheitsaudit: offene Ports, Dienste, Berechtigungen, Firewall, Benutzer, Updates, schnelle Fixes.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: devops
+  original-skill-path: ~/.hermes/skills/devops/system-security-audit/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

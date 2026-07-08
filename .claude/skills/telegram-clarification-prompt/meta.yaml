@@ -1,0 +1,17 @@
+name: telegram-clarification-prompt
+display-name: Telegram Clarification Prompt
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/productivity/telegram-clarification-prompt/"
+description: |
+  Wenn Yuno eine Entscheidung oder Eingabe vom User braucht, wird eine Telegram DM geschickt statt inline zu warten.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: productivity
+  original-skill-path: ~/.hermes/skills/productivity/telegram-clarification-prompt/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'
