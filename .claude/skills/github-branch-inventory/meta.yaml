@@ -1,0 +1,17 @@
+name: github-branch-inventory
+display-name: Github Branch Inventory
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/skills/github-branch-inventory/"
+description: |
+  Multi-repo branch staleness scans, branch inventory with last-commit dates, auto-delete heuristics, and bulk branch cleanup workflows. Load for "branch-cleanup-scan", "stale branches", "Branch-Inventar", "Welche Branches sind alt", "aufräumen alle Repos", "branch hygiene sweep", or any task that needs to enumerate branches across multiple repos and classify them by age. Covers the /branches API gotcha (no commit dates — must fetch per-branch via /commits/{ref}), the MCP GitHub auth-fallback to `gh` CLI, staleness classification (>30d STALE / 15-30d WARN / ≤14d ACTIVE), and 8 auto-delete-candid
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: skills
+  original-skill-path: ~/.hermes/skills/github-branch-inventory/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

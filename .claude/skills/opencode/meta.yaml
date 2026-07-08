@@ -1,0 +1,17 @@
+name: opencode
+display-name: Opencode
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/autonomous-ai-agents/opencode/"
+description: |
+  Delegate coding to OpenCode CLI (features, PR review).
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: autonomous-ai-agents
+  original-skill-path: ~/.hermes/skills/autonomous-ai-agents/opencode/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

@@ -1,0 +1,17 @@
+name: film-shot
+display-name: Film Shot
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/film-shot/"
+description: |
+  Professional film storyboard / film still / character card design skill. Covers six-dimension shot language (shot type / camera position / movement / lighting / emotion / time) + 8 visual styles (cyberpunk, Hong Kong noir, IMAX epic, symmetrical candy color, Nordic minimal, 70s film, film noir, natural realism) + realistic/anime/3D medium style locks + character card layouts (three-/eight-view, expression sheet, pose library) + cross-shot identity consistency (Subject Identity Lock). Core capabilities: precise shot language, calibrated style setting, no medium drift, recognizable characters ac
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/film-shot/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

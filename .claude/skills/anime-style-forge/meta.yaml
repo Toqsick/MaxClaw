@@ -1,0 +1,22 @@
+name: anime-style-forge
+display-name: Anime Style Forge
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/creative/anime-style-forge/"
+description: |
+  Specialized in anime/2D/character stylization for image generation and conversion. Covers Japanese, Chinese, Korean, and Western art style families.
+  Uses provenance analysis to trace reference images' style DNA, performs a 10-dimension analysis → 3-dimension collapse to precisely lock the style's essence,
+  then matches the optimal tool and prompt approach for generation.
+  Trigger on: "anime-ify", "2D style", "convert to anime", "cel-shading", "ghibli style",
+  "Korean watercolor", "fantasy 3D", "chibi", "Japanese anime style", "style conversion", "manga style", "character illustration",
+  
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: creative
+  original-skill-path: ~/.hermes/skills/creative/anime-style-forge/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

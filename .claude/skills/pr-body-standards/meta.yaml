@@ -1,0 +1,17 @@
+name: pr-body-standards
+display-name: Pr Body Standards
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/productivity/pr-body-standards/"
+description: |
+  PR-Body-Erstellung mit echtem Test-Execution-Vorlauf. 4-Abschnitt-Struktur (Was / Verifiziert / Risk-Register / Deferred), Pre-Existing-vs-Introduced-Trennung, Root-Cause-Tracing auf Code-Pattern-Ebene. Liefert Abnahme-fähige Handoff-Dokumente, keine Commit-Log-Wiederholungen.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: productivity
+  original-skill-path: ~/.hermes/skills/productivity/pr-body-standards/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

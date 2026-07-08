@@ -1,0 +1,17 @@
+name: heartmula
+display-name: Heartmula
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/media/heartmula/"
+description: |
+  HeartMuLa: Suno-like song generation from lyrics + tags.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: media
+  original-skill-path: ~/.hermes/skills/media/heartmula/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

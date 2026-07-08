@@ -1,0 +1,17 @@
+name: verify-before-fix
+display-name: Verify Before Fix
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/software-development/verify-before-fix/"
+description: |
+  Execute bug fixes from an issue description when locations may be stale, paths may not match repo layout, and bugs may already be partially fixed on the current branch. Verify each listed bug before touching code.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: software-development
+  original-skill-path: ~/.hermes/skills/software-development/verify-before-fix/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

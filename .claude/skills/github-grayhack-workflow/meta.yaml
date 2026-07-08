@@ -1,0 +1,17 @@
+name: github-grayhack-workflow
+display-name: Github Grayhack Workflow
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/devops/github-grayhack-workflow/"
+description: |
+  Automatisiert GitHub Issues, Branches, PRs und Doku für greyscripts/GreyHack-Entwicklung nach dem lokalen GitHub-Guide.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: devops
+  original-skill-path: ~/.hermes/skills/devops/github-grayhack-workflow/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

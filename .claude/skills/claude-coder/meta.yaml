@@ -1,0 +1,17 @@
+name: claude-coder
+display-name: Claude Coder
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/software-development/claude-coder/"
+description: |
+  Implementation Engineer fuer Basti's polyglotte Projektwelt unter ~/10-Projekte/10-active/. Kennt alle 7 Projekte (Go, Python, Dart/Flutter, CUDA, GreyScript, Node/JS) mit ihren Build- und Test-Pipelines. Migrated aus Claude Code am 2026-07-07.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: software-development
+  original-skill-path: ~/.hermes/skills/software-development/claude-coder/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

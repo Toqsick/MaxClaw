@@ -1,0 +1,17 @@
+name: inline-gate-fallback
+display-name: Inline Gate Fallback
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/productivity/inline-gate-fallback/"
+description: |
+  Use when the Telegram-DM channel is not available and user input/decisions are required blockingly. Leitet 2-4 Optionen inline im Chat weiter mit Pattern-7 System-Verifikation vor Implementation.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: productivity
+  original-skill-path: ~/.hermes/skills/productivity/inline-gate-fallback/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

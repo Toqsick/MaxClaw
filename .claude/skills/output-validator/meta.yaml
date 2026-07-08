@@ -1,0 +1,17 @@
+name: output-validator
+display-name: Output Validator
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/software-development/output-validator/"
+description: |
+  Pre-Flight Scheck für jeden Output — validiert JSON, Markdown, Python-Syntax und Pflicht-Sektionen BEVOR der Output an den nächsten Schritt weitergegeben wird. Verhindert, dass malformierter Output in den Critic oder Handoff wandert.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: software-development
+  original-skill-path: ~/.hermes/skills/software-development/output-validator/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

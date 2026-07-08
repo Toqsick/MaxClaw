@@ -1,0 +1,17 @@
+name: security-audit
+display-name: Security Audit
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/devops/security-audit/"
+description: |
+  Linux security audits — host security (fwupd HSI, TPM, Secure Boot, kernel taint, power management), system security (ports, services, permissions, firewall), and local AI service hygiene (Ollama install/removal, config sync). Three-layer security coverage.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: devops
+  original-skill-path: ~/.hermes/skills/devops/security-audit/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

@@ -1,0 +1,17 @@
+name: claude-coding-specialist
+display-name: Claude Coding Specialist
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/software-development/claude-coding-specialist/"
+description: |
+  Senior Software Engineer fuer HARD Probleme auf Basti's Workstation. Architektur-Design, Cross-Cutting Refactors, Subtle/Heisenbug Debugging, Concurrency, Algorithm-Heavy Implementation. Migrated aus Claude Code am 2026-07-07.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: software-development
+  original-skill-path: ~/.hermes/skills/software-development/claude-coding-specialist/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

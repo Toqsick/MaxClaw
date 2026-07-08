@@ -1,0 +1,17 @@
+name: workflow-template
+display-name: Workflow Template
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/orchestration/workflow-template/"
+description: |
+  Use when Basti wants a structured multi-agent plan for a domain task — server hardening, repo cleanup, security/CVE analysis, GreyScript tool dev, or Ollama/LLM setup. Domain-adapter for multi-agent-master-workflow with 🟥🟧🟨🟩 priority, Phase-1→Phase-2 gate, and Mnemosyne hooks. Trigger on: hardening plan, ollama optimization, CVE analyse, greyscript architecture, repo cleanup, systematischer plan für.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: orchestration
+  original-skill-path: ~/.hermes/skills/orchestration/workflow-template/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

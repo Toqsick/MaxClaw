@@ -1,0 +1,17 @@
+name: web-design-guidelines
+display-name: Web Design Guidelines
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/skills/web-design-guidelines/"
+description: |
+  UI-Code-Review gegen Vercels Web Interface Guidelines. Nutzen bei "review mein UI", "check accessibility", "audit
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: skills
+  original-skill-path: ~/.hermes/skills/web-design-guidelines/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

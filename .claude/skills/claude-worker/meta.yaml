@@ -1,0 +1,17 @@
+name: claude-worker
+display-name: Claude Worker
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/software-development/claude-worker/"
+description: |
+  Mechanical Execution Agent fuer Basti's Workstation. Batch edits, find-and-replace, renames, known fix patterns wiederholen, file cleanup. Wenn das "was" schon entschieden ist und kein Design-Judgment noetig ist. Migrated aus Claude Code am 2026-07-07.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: software-development
+  original-skill-path: ~/.hermes/skills/software-development/claude-worker/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

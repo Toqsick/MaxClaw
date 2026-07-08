@@ -1,0 +1,19 @@
+name: claude-security-auditor
+display-name: Claude Security Auditor
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/devops/claude-security-auditor/"
+description: |
+  Security Auditor fuer Basti's Zorin OS Workstation. Read-only Reconnaissance Default:
+  Firewall, Ports, Services, Permissions, Credential Exposure, Sudoers, Drift vs Baseline.
+  Migrated aus Claude Code am 2026-07-07.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: devops
+  original-skill-path: ~/.hermes/skills/devops/claude-security-auditor/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

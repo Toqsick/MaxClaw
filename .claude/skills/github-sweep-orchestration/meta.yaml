@@ -1,0 +1,17 @@
+name: github-sweep-orchestration
+display-name: Github Sweep Orchestration
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/orchestration/github-sweep-orchestration/"
+description: |
+  Multi-Agent Pattern für kompletten GitHub-Repo-Cleanup mit M3-Bienen — Recon, Wave Dispatch, Consolidation. Use when user says "manage mein github", "räum github auf", "was ist offen", or wants all open issues/PRs handled at once.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: orchestration
+  original-skill-path: ~/.hermes/skills/orchestration/github-sweep-orchestration/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

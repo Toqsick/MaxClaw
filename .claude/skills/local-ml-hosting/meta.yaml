@@ -1,0 +1,17 @@
+name: local-ml-hosting
+display-name: Local Ml Hosting
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/mlops/local-ml-hosting/"
+description: |
+  Local ML model hosting and evaluation — Ollama installation, model selection by VRAM, Hermes integration, GGUF
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: mlops
+  original-skill-path: ~/.hermes/skills/mlops/local-ml-hosting/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

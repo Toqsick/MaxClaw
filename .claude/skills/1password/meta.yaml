@@ -1,0 +1,17 @@
+name: 1password
+display-name: 1Password
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/security/1password/"
+description: |
+  Set up and use 1Password CLI (op). Use when installing the CLI, enabling desktop app integration, signing in, and reading/injecting secrets for commands.
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: security
+  original-skill-path: ~/.hermes/skills/security/1password/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'

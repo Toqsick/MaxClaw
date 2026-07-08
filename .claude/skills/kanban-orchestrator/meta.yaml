@@ -1,0 +1,17 @@
+name: kanban-orchestrator
+display-name: Kanban Orchestrator
+version: "1.0.0"
+author: "Basti (Hermes-Skill conversion 2026-07-07)"
+license: MIT
+source: "Hermes Skills Library ~/.hermes/skills/devops/kanban-orchestrator/"
+description: |
+  Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The "don't
+trigger-words:
+  - (no explicit triggers — description-based)
+provenance:
+  original-category: devops
+  original-skill-path: ~/.hermes/skills/devops/kanban-orchestrator/SKILL.md
+  converted-by: yuno-bundle-builder
+  date: 2026-07-07
+  hermes-skill-format: 'YAML frontmatter + Markdown body'
+  minimax-skill-format: 'Same (Hub reads SKILL.md directly)'
